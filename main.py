@@ -43,7 +43,7 @@ class App(customtkinter.CTk):
             style.theme_use("default")    
             style.configure("Treeview",
                             background="red",
-                            foreground="white",
+                            foreground="black",
                             rowheight=25,
                             fieldbackground="gray14",
                             bordercolor="#343638",
