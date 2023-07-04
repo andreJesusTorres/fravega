@@ -17,23 +17,45 @@ class App(customtkinter.CTk):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
 
-        style = ttk.Style()
-        style.theme_use("default")    
-        style.configure("Treeview",
-                        background="#2a2d2e",
-                        foreground="black",
-                        rowheight=25,
-                        fieldbackground="gray14",
-                        bordercolor="#343638",
-                        borderwidth=0)
-        style.map('Treeview', background=[('selected', '#b01685')])
-    
-        style.configure("Treeview.Heading",
-                        background="gray13",
-                        foreground="white",
-                        relief="flat")
-        style.map("Treeview.Heading",
-                background=[('active', '#b01685')])
+        class TreeViewStyle1():
+
+            style = ttk.Style()
+            style.theme_use("default")    
+            style.configure("Treeview",
+                            background="#2a2d2e",
+                            foreground="black",
+                            rowheight=25,
+                            fieldbackground="gray14",
+                            bordercolor="#343638",
+                            borderwidth=0)
+            style.map('Treeview', background=[('selected', '#b01685')])
+        
+            style.configure("Treeview.Heading",
+                            background="gray13",
+                            foreground="white",
+                            relief="flat")
+            style.map("Treeview.Heading",
+                    background=[('active', '#b01685')])
+            
+        class TreeViewStyle2():
+
+            style = ttk.Style()
+            style.theme_use("default")    
+            style.configure("Treeview",
+                            background="red",
+                            foreground="black",
+                            rowheight=25,
+                            fieldbackground="gray14",
+                            bordercolor="#343638",
+                            borderwidth=0)
+            style.map('Treeview', background=[('selected', '#b01685')])
+        
+            style.configure("Treeview.Heading",
+                            background="red",
+                            foreground="white",
+                            relief="flat")
+            style.map("Treeview.Heading",
+                    background=[('active', '#b01685')])
 
         image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_images")
         self.logo_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "logo.png")), size=(26, 26))
@@ -215,13 +237,13 @@ class App(customtkinter.CTk):
             elif (column0 == "Entregas"):
                 self.frame_5_button.configure(state="enabled")
         else:
-            self.home_frame_label_5 = customtkinter.CTkLabel(self.home_frame, text="No se encontró ese usuario.", text_color="red")
-            self.home_frame_label_5.place(x=180, y=380)
+            self.home_frame_label_5 = customtkinter.CTkLabel(self.home_frame, text="Usuario no encontrado.", text_color="red")
+            self.home_frame_label_5.place(x=195, y=380)
 
             def after_user_error():
                 self.home_frame_label_5.destroy()
 
-            self.home_frame.after(3300,after_user_error)
+            self.home_frame.after(3500,after_user_error)
 
     def frame_2_button_event(self):
         self.select_frame_by_name("frame_2")
