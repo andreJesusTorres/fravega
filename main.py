@@ -17,7 +17,25 @@ class App(customtkinter.CTk):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
 
+        class TreeViewStyle1():
+
+            style = ttk.Style()
+            style.theme_use("default")    
+            style.configure("Treeview",
+                            background="#2a2d2e",
+                            foreground="black",
+                            rowheight=25,
+                            fieldbackground="gray14",
+                            bordercolor="#343638",
+                            borderwidth=0)
+            style.map('Treeview', background=[('selected', '#b01685')])
         
+            style.configure("Treeview.Heading",
+                            background="gray13",
+                            foreground="white",
+                            relief="flat")
+            style.map("Treeview.Heading",
+                    background=[('active', '#b01685')])
             
         class TreeViewStyle2():
 
