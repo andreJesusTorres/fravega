@@ -25,6 +25,7 @@ class App(customtkinter.CTk):
         self.rrhh_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "rrhh.png")), size=(20, 20))
         self.deposito_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "deposito.png")), size=(20, 20))
         self.entregas_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "entregas.png")), size=(20, 20))
+        self.mensajes_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "mensajes.png")), size=(20, 20))
 
         self.navigation_frame = customtkinter.CTkFrame(self, corner_radius=0)
         self.navigation_frame.grid(row=0, column=0, sticky="nsew")
@@ -109,28 +110,48 @@ class App(customtkinter.CTk):
         else:
             self.home_frame.grid_forget()
         if name == "frame_2":
+            
+            self.frame_2.grid(row=0, column=1,sticky="nsew")
+
+            self.home_frame_2_button_1 = customtkinter.CTkButton(self.frame_2, text="+", width=4)
+            self.home_frame_2_button_1.grid(row=0, column=0, padx=(170, 0), pady=20)
+            self.home_frame_2_button_2 = customtkinter.CTkButton(self.frame_2, text="Mensajes", image=self.mensajes_image)
+            self.home_frame_2_button_2.grid(row=0, column=0, padx=20, pady=20,sticky="e")
 
             style = ttk.Style()
             style.theme_use("default")    
-            style.configure("Treeview", background="#b01685", foreground="#3B2682", rowheight=25, fieldbackground="#573FA8", bordercolor="#343638", borderwidth=0)
-            style.map('Treeview', background=[('selected', '#b01685')])
-        
-            style.configure("Treeview.Heading", background="#433091", foreground="white", relief="flat")
-            style.map("Treeview.Heading", background=[('active', '#b01685')])            
 
-            self.frame_2.grid(row=0, column=1, sticky="nsew")
+            if(self.appearance_mode_menu.get() == "Dark"):                
+                style.configure("Treeview", background="#b01685", foreground="#3B2682", rowheight=25, fieldbackground="#343638", bordercolor="#343638", borderwidth=0)
+                style.map('Treeview', background=[('selected', '#b01685')])
+            
+                style.configure("Treeview.Heading", background="#2E2F31", foreground="white", relief="flat")
+                style.map("Treeview.Heading", background=[('active', '#b01685')])
+                                  
+            elif(self.appearance_mode_menu.get() == "Light"):
+                style.configure("Treeview", background="#b01685", foreground="#3B2682", rowheight=25, fieldbackground="#F9F9FA", bordercolor="#343638", borderwidth=0)
+                style.map('Treeview', background=[('selected', '#b01685')])
+            
+                style.configure("Treeview.Heading", background="#E3E3E3", foreground="gray1", relief="flat")
+                style.map("Treeview.Heading", background=[('active', '#b01685')])   
 
-            treeview = ttk.Treeview(self.frame_2, style="Treeview", height=6)           
-            treeview["columns"] = ("area", "fecha", "mensaje")
-            treeview.column("#0", width=40, minwidth=40, stretch=tk.NO)
-            treeview.column("area", width=85, minwidth=100, stretch=tk.NO)
-            treeview.column("fecha", width=100, minwidth=100, stretch=tk.NO)
-            treeview.column("mensaje", width=255, minwidth=100, stretch=tk.NO)
-            treeview.heading("#0", text="Id")
-            treeview.heading("area", text="Area")
-            treeview.heading("fecha", text="Fecha")
-            treeview.heading("mensaje", text="Mensaje")
-            treeview.grid(row=0,column=0,padx=20,pady=20)
+            self.treeview = ttk.Treeview(self.frame_2, style="Treeview", height=6)           
+            self.treeview["columns"] = ("area", "fecha", "mensaje")
+            self.treeview.column("#0", width=40, minwidth=40, stretch=tk.NO)
+            self.treeview.column("area", width=85, minwidth=100, stretch=tk.NO)
+            self.treeview.column("fecha", width=100, minwidth=100, stretch=tk.NO)
+            self.treeview.column("mensaje", width=255, minwidth=100, stretch=tk.NO)
+            self.treeview.heading("#0", text="Id")
+            self.treeview.heading("area", text="Area")
+            self.treeview.heading("fecha", text="Fecha")
+            self.treeview.heading("mensaje", text="Mensaje")
+            self.treeview.grid(row=1,column=0,padx=20,pady=0)
+
+            self.home_frame_2_button_3 = customtkinter.CTkButton(self.frame_2, text="Compras")
+            self.home_frame_2_button_3.grid(row=2, column=0, padx=(0,180), pady=20)
+            self.home_frame_2_button_4 = customtkinter.CTkButton(self.frame_2, text="Ventas")
+            self.home_frame_2_button_4.grid(row=2, column=0, padx=(180,0), pady=20)
+
         else:
             self.frame_2.grid_forget()
         if name == "frame_3":
@@ -230,7 +251,7 @@ class App(customtkinter.CTk):
 
     def change_appearance_mode_event(self, new_appearance_mode):
         customtkinter.set_appearance_mode(new_appearance_mode)
-
+        
 if __name__ == "__main__":
     app = App()
     app.iconbitmap("test_images/fravega.ico")
