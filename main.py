@@ -17,46 +17,6 @@ class App(customtkinter.CTk):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
 
-        class TreeViewStyle1():
-
-            style = ttk.Style()
-            style.theme_use("default")    
-            style.configure("Treeview",
-                            background="#2a2d2e",
-                            foreground="black",
-                            rowheight=25,
-                            fieldbackground="gray14",
-                            bordercolor="#343638",
-                            borderwidth=0)
-            style.map('Treeview', background=[('selected', '#b01685')])
-        
-            style.configure("Treeview.Heading",
-                            background="gray13",
-                            foreground="white",
-                            relief="flat")
-            style.map("Treeview.Heading",
-                    background=[('active', '#b01685')])
-            
-        class TreeViewStyle2():
-
-            style = ttk.Style()
-            style.theme_use("default")    
-            style.configure("Treeview",
-                            background="red",
-                            foreground="black",
-                            rowheight=25,
-                            fieldbackground="gray14",
-                            bordercolor="#343638",
-                            borderwidth=0)
-            style.map('Treeview', background=[('selected', '#b01685')])
-        
-            style.configure("Treeview.Heading",
-                            background="red",
-                            foreground="white",
-                            relief="flat")
-            style.map("Treeview.Heading",
-                    background=[('active', '#b01685')])
-
         image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_images")
         self.logo_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "logo.png")), size=(26, 26))
         self.banner_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "banner.png")), size=(500, 150))
@@ -149,17 +109,28 @@ class App(customtkinter.CTk):
         else:
             self.home_frame.grid_forget()
         if name == "frame_2":
+
+            style = ttk.Style()
+            style.theme_use("default")    
+            style.configure("Treeview", background="#b01685", foreground="#3B2682", rowheight=25, fieldbackground="#573FA8", bordercolor="#343638", borderwidth=0)
+            style.map('Treeview', background=[('selected', '#b01685')])
+        
+            style.configure("Treeview.Heading", background="#433091", foreground="white", relief="flat")
+            style.map("Treeview.Heading", background=[('active', '#b01685')])            
+
             self.frame_2.grid(row=0, column=1, sticky="nsew")
 
-            treeview = ttk.Treeview(self.frame_2, style="Treeview")
-            treeview["columns"] = ("ganancias", "perdidas")
-            treeview.column("#0", width=100, minwidth=100, stretch=tk.NO)
-            treeview.column("ganancias", width=100, minwidth=100, stretch=tk.NO)
-            treeview.column("perdidas", width=100, minwidth=100, stretch=tk.NO)
-            treeview.heading("#0", text="Ganancias")
-            treeview.heading("ganancias", text="Perdidas")
-            treeview.heading("perdidas", text="ASLDKASJ")
-            treeview.grid(row=0,column=0)
+            treeview = ttk.Treeview(self.frame_2, style="Treeview", height=6)           
+            treeview["columns"] = ("area", "fecha", "mensaje")
+            treeview.column("#0", width=40, minwidth=40, stretch=tk.NO)
+            treeview.column("area", width=85, minwidth=100, stretch=tk.NO)
+            treeview.column("fecha", width=100, minwidth=100, stretch=tk.NO)
+            treeview.column("mensaje", width=255, minwidth=100, stretch=tk.NO)
+            treeview.heading("#0", text="Id")
+            treeview.heading("area", text="Area")
+            treeview.heading("fecha", text="Fecha")
+            treeview.heading("mensaje", text="Mensaje")
+            treeview.grid(row=0,column=0,padx=20,pady=20)
         else:
             self.frame_2.grid_forget()
         if name == "frame_3":
