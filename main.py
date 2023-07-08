@@ -151,7 +151,7 @@ class App(customtkinter.CTk):
             self.home_frame_2_button_3.grid(row=2, column=0, padx=(0,180), pady=20)
             self.home_frame_2_button_4 = customtkinter.CTkButton(self.frame_2, text="Ventas")
             self.home_frame_2_button_4.grid(row=2, column=0, padx=(180,0), pady=20)
-
+            
         else:
             self.frame_2.grid_forget()
         if name == "frame_3":
