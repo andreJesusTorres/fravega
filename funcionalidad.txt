@@ -1,0 +1,16 @@
+ADMINISTRACIÓN: Botón mensajes + treeview compras + treeview ventas + scrollbar´s.
+. Cuando se toque compra, que se abran todas las compras que hayan sido cargadas indicando el área.
+. Cuando se toque venta, que se abran todas las ventas que hayan sido cargadas indiciando el área.
+. Mensajes, que se abran los mensajes de otras áreas y que permita responderlos y/o mandar nuevos mensajes.
+
+RR.HH: Treeview empleados + entry´s + botones AEM
+.Treeview con todos los empleados, con su área, salario, asistencia.
+. Agregar, modificar y eliminar personal.
+
+DEPÓSITO: Treeview stock + entry´s + botones AEM
+. Treeview con stock, que tenga, producto, fecha de entrada, fecha de salida.
+. Agregar, modificar y eliminar stock.
+
+ENTREGAS
+.  Treeview con entregas a hacer, que tenga, producto, cantidad, cliente con dni.
+. Agregar, modificar y entregar producto. 

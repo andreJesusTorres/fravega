@@ -20,6 +20,8 @@ class App(customtkinter.CTk):
         image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_images")
         self.logo_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "logo.png")), size=(26, 26))
         self.banner_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "banner.png")), size=(500, 150))
+        self.banner_image_compra = customtkinter.CTkImage(Image.open(os.path.join(image_path, "banner_compra.png")), size=(500, 50))
+        self.banner_image_venta = customtkinter.CTkImage(Image.open(os.path.join(image_path, "banner_venta.png")), size=(500, 50))
         self.home_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "inicio.png")), size=(20, 20))
         self.admin_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "admin.png")), size=(20, 20))
         self.rrhh_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "rrhh.png")), size=(20, 20))
@@ -31,9 +33,9 @@ class App(customtkinter.CTk):
         self.navigation_frame.grid(row=0, column=0, sticky="nsew")
         self.navigation_frame.grid_rowconfigure(6, weight=1)
 
-        self.navigation_frame_label = customtkinter.CTkLabel(self.navigation_frame, text="  FRÁVEGA", image=self.logo_image,
+        self.navigation_frame_label = customtkinter.CTkLabel(self.navigation_frame, text="FRÁVEGA", image=self.logo_image,
                                                              compound="left", font=customtkinter.CTkFont("Calibri",size=15, weight="bold"))
-        self.navigation_frame_label.grid(row=0, column=0, padx=20, pady=20)
+        self.navigation_frame_label.grid(row=0, column=0, padx=25, pady=20)
 
         self.home_button = customtkinter.CTkButton(self.navigation_frame, corner_radius=0, height=40, border_spacing=10, text="Inicio",
                                                    fg_color="transparent", text_color=("gray10", "gray90"), hover_color=("gray70", "gray30"),
@@ -113,10 +115,11 @@ class App(customtkinter.CTk):
             
             self.frame_2.grid(row=0, column=1,sticky="nsew")
 
-            self.home_frame_2_button_1 = customtkinter.CTkButton(self.frame_2, text="+", width=4)
-            self.home_frame_2_button_1.grid(row=0, column=0, padx=(170, 0), pady=20)
-            self.home_frame_2_button_2 = customtkinter.CTkButton(self.frame_2, text="Mensajes", image=self.mensajes_image)
-            self.home_frame_2_button_2.grid(row=0, column=0, padx=20, pady=20,sticky="e")
+            self.home_frame_2_button_1 = customtkinter.CTkButton(self.frame_2, text="Mensajes", image=self.mensajes_image)
+            self.home_frame_2_button_1.grid(row=2, column=0, padx=5, pady=20,sticky="e")
+
+            self.home_frame_2_banner_image_compra_label = customtkinter.CTkLabel(self.frame_2, text="", image=self.banner_image_compra)
+            self.home_frame_2_banner_image_compra_label.grid(row=3, column=0, padx=5, pady=0)
 
             style = ttk.Style()
             style.theme_use("default")    
@@ -135,23 +138,39 @@ class App(customtkinter.CTk):
                 style.configure("Treeview.Heading", background="#E3E3E3", foreground="gray1", relief="flat")
                 style.map("Treeview.Heading", background=[('active', '#b01685')])   
 
-            self.treeview = ttk.Treeview(self.frame_2, style="Treeview", height=6)           
-            self.treeview["columns"] = ("area", "fecha", "mensaje")
-            self.treeview.column("#0", width=40, minwidth=40, stretch=tk.NO)
-            self.treeview.column("area", width=85, minwidth=100, stretch=tk.NO)
-            self.treeview.column("fecha", width=100, minwidth=100, stretch=tk.NO)
-            self.treeview.column("mensaje", width=255, minwidth=100, stretch=tk.NO)
-            self.treeview.heading("#0", text="Id")
-            self.treeview.heading("area", text="Area")
-            self.treeview.heading("fecha", text="Fecha")
-            self.treeview.heading("mensaje", text="Mensaje")
-            self.treeview.grid(row=1,column=0,padx=20,pady=0)
+            self.treeview_compra = ttk.Treeview(self.frame_2, style="Treeview", height=4)           
+            self.treeview_compra["columns"] = ("area", "fecha", "documento")
+            self.treeview_compra.column("#0", width=40, minwidth=40, stretch=tk.NO)
+            self.treeview_compra.column("area", width=85, minwidth=100, stretch=tk.NO)
+            self.treeview_compra.column("fecha", width=100, minwidth=100, stretch=tk.NO)
+            self.treeview_compra.column("documento", width=250, minwidth=100, stretch=tk.NO)
+            self.treeview_compra.heading("#0", text="Id")
+            self.treeview_compra.heading("area", text="Area")
+            self.treeview_compra.heading("fecha", text="Fecha")
+            self.treeview_compra.heading("documento", text="Mensaje")
+            self.treeview_compra.grid(row=4,column=0,padx=5,pady=0)
 
-            self.home_frame_2_button_3 = customtkinter.CTkButton(self.frame_2, text="Compras")
-            self.home_frame_2_button_3.grid(row=2, column=0, padx=(0,180), pady=20)
-            self.home_frame_2_button_4 = customtkinter.CTkButton(self.frame_2, text="Ventas")
-            self.home_frame_2_button_4.grid(row=2, column=0, padx=(180,0), pady=20)
-            
+            treeview_compra_scrollbar = customtkinter.CTkScrollbar(self.frame_2, height=124, command=self.treeview_compra.yview)
+            treeview_compra_scrollbar.grid(row=4, column=0,padx=(460,0))
+
+            self.home_frame_2_banner_image_venta_label = customtkinter.CTkLabel(self.frame_2, text="", image=self.banner_image_venta)
+            self.home_frame_2_banner_image_venta_label.grid(row=5, column=0, padx=5, pady=0)
+
+            self.treeview_venta = ttk.Treeview(self.frame_2, style="Treeview", height=4)           
+            self.treeview_venta["columns"] = ("area", "fecha", "documento")
+            self.treeview_venta.column("#0", width=40, minwidth=40, stretch=tk.NO)
+            self.treeview_venta.column("area", width=85, minwidth=100, stretch=tk.NO)
+            self.treeview_venta.column("fecha", width=100, minwidth=100, stretch=tk.NO)
+            self.treeview_venta.column("documento", width=250, minwidth=100, stretch=tk.NO)
+            self.treeview_venta.heading("#0", text="Id")
+            self.treeview_venta.heading("area", text="Area")
+            self.treeview_venta.heading("fecha", text="Fecha")
+            self.treeview_venta.heading("documento", text="Mensaje")
+            self.treeview_venta.grid(row=6,column=0,padx=5,pady=0)
+
+            treeview_venta_scrollbar = customtkinter.CTkScrollbar(self.frame_2, height=124, command=self.treeview_compra.yview)
+            treeview_venta_scrollbar.grid(row=6, column=0,padx=(460,0))
+
         else:
             self.frame_2.grid_forget()
         if name == "frame_3":
