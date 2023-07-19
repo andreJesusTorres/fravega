@@ -214,13 +214,13 @@ class App(customtkinter.CTk):
             self.treeview_empleados.grid(row=3,column=0,padx=5,pady=0)
 
             self.home_frame_3_label_dni = customtkinter.CTkLabel(self.frame_3, text="DNI", fg_color="transparent")
-            self.home_frame_3_label_dni.place(x=115,y=248)
+            self.home_frame_3_label_dni.place(x=65,y=247)
             self.home_frame_3_label_nombreyapellido = customtkinter.CTkLabel(self.frame_3, text="Nombre y Apellido", fg_color="transparent")
-            self.home_frame_3_label_nombreyapellido.place(x=328,y=248)
+            self.home_frame_3_label_nombreyapellido.place(x=312,y=247)
             self.home_frame_3_label_area = customtkinter.CTkLabel(self.frame_3, text="Area", fg_color="transparent")
-            self.home_frame_3_label_area.place(x=115,y=320)
+            self.home_frame_3_label_area.place(x=65,y=319)
             self.home_frame_3_label_salario = customtkinter.CTkLabel(self.frame_3, text="Salario", fg_color="transparent")
-            self.home_frame_3_label_salario.place(x=360,y=320)
+            self.home_frame_3_label_salario.place(x=312,y=319)
             
             self.home_frame_3_entry_dni = customtkinter.CTkEntry(self.frame_3, placeholder_text="Solo números")
             self.home_frame_3_entry_dni.grid(row=5,column=0,padx=(0,250),pady=40)
