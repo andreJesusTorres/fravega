@@ -22,6 +22,7 @@ class App(customtkinter.CTk):
         self.banner_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "banner.png")), size=(500, 150))
         self.banner_image_compra = customtkinter.CTkImage(Image.open(os.path.join(image_path, "banner_compra.png")), size=(500, 50))
         self.banner_image_venta = customtkinter.CTkImage(Image.open(os.path.join(image_path, "banner_venta.png")), size=(500, 50))
+        self.banner_image_empleados = customtkinter.CTkImage(Image.open(os.path.join(image_path, "banner_empleados.png")), size=(500, 50))
         self.home_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "inicio.png")), size=(20, 20))
         self.admin_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "admin.png")), size=(20, 20))
         self.rrhh_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "rrhh.png")), size=(20, 20))
@@ -111,8 +112,7 @@ class App(customtkinter.CTk):
             self.home_frame.grid(row=0, column=1, sticky="nsew")
         else:
             self.home_frame.grid_forget()
-        if name == "frame_2":
-            
+        if name == "frame_2":            
             self.frame_2.grid(row=0, column=1,sticky="nsew")
 
             self.home_frame_2_button_1 = customtkinter.CTkButton(self.frame_2, text="Mensajes", image=self.mensajes_image)
@@ -170,11 +170,70 @@ class App(customtkinter.CTk):
 
             treeview_venta_scrollbar = customtkinter.CTkScrollbar(self.frame_2, height=124, command=self.treeview_compra.yview)
             treeview_venta_scrollbar.grid(row=6, column=0,padx=(460,0))
-
         else:
             self.frame_2.grid_forget()
         if name == "frame_3":
             self.frame_3.grid(row=0, column=1, sticky="nsew")
+
+            self.home_frame_3_button_1 = customtkinter.CTkButton(self.frame_3, text="Mensajes", image=self.mensajes_image)
+            self.home_frame_3_button_1.grid(row=1, column=0, padx=5, pady=20,sticky="e")
+
+            self.home_frame_3_banner_image_empleados_label = customtkinter.CTkLabel(self.frame_3, text="", image=self.banner_image_empleados)
+            self.home_frame_3_banner_image_empleados_label.grid(row=2, column=0, padx=5, pady=0)
+
+            style = ttk.Style()
+            style.theme_use("default")
+
+            if(self.appearance_mode_menu.get() == "Dark"):                
+                style.configure("Treeview", background="#b01685", foreground="#3B2682", rowheight=25, fieldbackground="#343638", bordercolor="#343638", borderwidth=0)
+                style.map('Treeview', background=[('selected', '#b01685')])
+            
+                style.configure("Treeview.Heading", background="#2E2F31", foreground="white", relief="flat")
+                style.map("Treeview.Heading", background=[('active', '#b01685')])
+                                  
+            elif(self.appearance_mode_menu.get() == "Light"):
+                style.configure("Treeview", background="#b01685", foreground="#3B2682", rowheight=25, fieldbackground="#F9F9FA", bordercolor="#343638", borderwidth=0)
+                style.map('Treeview', background=[('selected', '#b01685')])
+            
+                style.configure("Treeview.Heading", background="#E3E3E3", foreground="gray1", relief="flat")
+                style.map("Treeview.Heading", background=[('active', '#b01685')])   
+
+            self.treeview_empleados = ttk.Treeview(self.frame_3, style="Treeview", height=4)           
+            self.treeview_empleados["columns"] = ("Nombre y Apellido", "Area", "Salario", "Asistencia")
+            self.treeview_empleados.column("#0", width=40, minwidth=40, stretch=tk.NO)
+            self.treeview_empleados.column("Nombre y Apellido", width=182, minwidth=182, stretch=tk.NO)
+            self.treeview_empleados.column("Area", width=82, minwidth=82, stretch=tk.NO)
+            self.treeview_empleados.column("Salario", width=82, minwidth=82, stretch=tk.NO)
+            self.treeview_empleados.column("Asistencia", width=82, minwidth=82, stretch=tk.NO)
+            self.treeview_empleados.heading("#0", text="DNI")
+            self.treeview_empleados.heading("Nombre y Apellido", text="Nombre y Apellido")
+            self.treeview_empleados.heading("Area", text="Area")
+            self.treeview_empleados.heading("Salario", text="Salario")
+            self.treeview_empleados.heading("Asistencia", text="Asistencia")
+            self.treeview_empleados.grid(row=3,column=0,padx=5,pady=0)
+
+            self.home_frame_3_label_dni = customtkinter.CTkLabel(self.frame_3, text="DNI", fg_color="transparent")
+            self.home_frame_3_label_dni.place(x=115,y=248)
+            self.home_frame_3_label_nombreyapellido = customtkinter.CTkLabel(self.frame_3, text="Nombre y Apellido", fg_color="transparent")
+            self.home_frame_3_label_nombreyapellido.place(x=328,y=248)
+            self.home_frame_3_label_area = customtkinter.CTkLabel(self.frame_3, text="Area", fg_color="transparent")
+            self.home_frame_3_label_area.place(x=115,y=320)
+            self.home_frame_3_label_salario = customtkinter.CTkLabel(self.frame_3, text="Salario", fg_color="transparent")
+            self.home_frame_3_label_salario.place(x=360,y=320)
+            
+            self.home_frame_3_entry_dni = customtkinter.CTkEntry(self.frame_3, placeholder_text="Solo números")
+            self.home_frame_3_entry_dni.grid(row=5,column=0,padx=(0,250),pady=40)
+            self.home_frame_3_entry_nombreyapellido = customtkinter.CTkEntry(self.frame_3)
+            self.home_frame_3_entry_nombreyapellido.grid(row=5,column=0,padx=(250,0),pady=40)
+            self.home_frame_3_entry_area = customtkinter.CTkEntry(self.frame_3)
+            self.home_frame_3_entry_area.grid(row=6,column=0,padx=(0,250),pady=5)
+            self.home_frame_3_entry_salario = customtkinter.CTkEntry(self.frame_3)
+            self.home_frame_3_entry_salario.grid(row=6,column=0,padx=(250,0),pady=5)
+
+            self.home_frame_3_button_2 = customtkinter.CTkButton(self.frame_3, text="Guardar", width=20)
+            self.home_frame_3_button_2.grid(row=7, column=0, padx=(260,0), pady=20)
+            self.home_frame_3_button_3 = customtkinter.CTkButton(self.frame_3, text="Eliminar", width=20)
+            self.home_frame_3_button_3.grid(row=7, column=0, padx=(400,0), pady=20)
         else:
             self.frame_3.grid_forget()
         if name == "frame_4":
@@ -270,6 +329,14 @@ class App(customtkinter.CTk):
 
     def change_appearance_mode_event(self, new_appearance_mode):
         customtkinter.set_appearance_mode(new_appearance_mode)
+        self.home_button_event()
+        self.home_frame_3_label_dni = customtkinter.CTkLabel(self.home_frame, text="Tema cambiado exitosamente", fg_color="transparent", text_color="#0AC90A")
+        self.home_frame_3_label_dni.grid(row=8,column=0)
+
+        def after_theme_changed():
+                self.home_frame_3_label_dni.destroy()
+
+        self.home_frame.after(2500,after_theme_changed)
         
 if __name__ == "__main__":
     app = App()
