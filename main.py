@@ -24,6 +24,7 @@ class App(customtkinter.CTk):
         self.banner_image_venta = customtkinter.CTkImage(Image.open(os.path.join(image_path, "banner_venta.png")), size=(500, 50))
         self.banner_image_empleados = customtkinter.CTkImage(Image.open(os.path.join(image_path, "banner_empleados.png")), size=(500, 50))
         self.banner_image_deposito = customtkinter.CTkImage(Image.open(os.path.join(image_path, "banner_deposito.png")), size=(500, 50))
+        self.banner_image_entregas = customtkinter.CTkImage(Image.open(os.path.join(image_path, "banner_entregas.png")), size=(500, 50))
         self.home_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "inicio.png")), size=(20, 20))
         self.admin_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "admin.png")), size=(20, 20))
         self.rrhh_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "rrhh.png")), size=(20, 20))
@@ -113,7 +114,7 @@ class App(customtkinter.CTk):
             self.home_frame.grid(row=0, column=1, sticky="nsew")
         else:
             self.home_frame.grid_forget()
-        if name == "frame_2":            
+        if name == "frame_2":
             self.frame_2.grid(row=0, column=1,sticky="nsew")
 
             self.home_frame_2_button_1 = customtkinter.CTkButton(self.frame_2, text="Mensajes", image=self.mensajes_image)
@@ -151,8 +152,8 @@ class App(customtkinter.CTk):
             self.treeview_compra.heading("documento", text="Mensaje")
             self.treeview_compra.grid(row=4,column=0,padx=5,pady=0)
 
-            treeview_compra_scrollbar = customtkinter.CTkScrollbar(self.frame_2, height=124, command=self.treeview_compra.yview)
-            treeview_compra_scrollbar.grid(row=4, column=0,padx=(460,0))
+            self.treeview_compra_scrollbar = customtkinter.CTkScrollbar(self.frame_2, height=124, command=self.treeview_compra.yview)
+            self.treeview_compra_scrollbar.grid(row=4, column=0,padx=(460,0))
 
             self.home_frame_2_banner_image_venta_label = customtkinter.CTkLabel(self.frame_2, text="", image=self.banner_image_venta)
             self.home_frame_2_banner_image_venta_label.grid(row=5, column=0, padx=5, pady=0)
@@ -213,6 +214,9 @@ class App(customtkinter.CTk):
             self.treeview_empleados.heading("Asistencia", text="Asistencia")
             self.treeview_empleados.grid(row=3,column=0,padx=5,pady=0)
 
+            self.treeview_empleados_scrollbar = customtkinter.CTkScrollbar(self.frame_3, height=124, command=self.treeview_empleados.yview)
+            self.treeview_empleados_scrollbar.grid(row=3, column=0,padx=(460,0))
+
             self.home_frame_3_label_dni = customtkinter.CTkLabel(self.frame_3, text="DNI", fg_color="transparent")
             self.home_frame_3_label_dni.place(x=65,y=247)
             self.home_frame_3_label_nombreyapellido = customtkinter.CTkLabel(self.frame_3, text="Nombre y Apellido", fg_color="transparent")
@@ -263,17 +267,20 @@ class App(customtkinter.CTk):
                 style.configure("Treeview.Heading", background="#E3E3E3", foreground="gray1", relief="flat")
                 style.map("Treeview.Heading", background=[('active', '#b01685')])   
 
-            self.treeview_empleados = ttk.Treeview(self.frame_4, style="Treeview", height=4)           
-            self.treeview_empleados["columns"] = ("Producto", "Fecha Entrada", "Fecha Salida")
-            self.treeview_empleados.column("#0", width=40, minwidth=40, stretch=tk.NO)
-            self.treeview_empleados.column("Producto", width=182, minwidth=182, stretch=tk.NO)
-            self.treeview_empleados.column("Fecha Entrada", width=100, minwidth=100, stretch=tk.NO)
-            self.treeview_empleados.column("Fecha Salida", width=100, minwidth=100, stretch=tk.NO)
-            self.treeview_empleados.heading("#0", text="Id")
-            self.treeview_empleados.heading("Producto", text="Producto")
-            self.treeview_empleados.heading("Fecha Entrada", text="Fecha Entrada")
-            self.treeview_empleados.heading("Fecha Salida", text="Fecha Salida")
-            self.treeview_empleados.grid(row=3,column=0,padx=5,pady=0)
+            self.treeview_deposito = ttk.Treeview(self.frame_4, style="Treeview", height=4)           
+            self.treeview_deposito["columns"] = ("Producto", "Fecha Entrada", "Fecha Salida")
+            self.treeview_deposito.column("#0", width=40, minwidth=40, stretch=tk.NO)
+            self.treeview_deposito.column("Producto", width=182, minwidth=182, stretch=tk.NO)
+            self.treeview_deposito.column("Fecha Entrada", width=110, minwidth=110, stretch=tk.NO)
+            self.treeview_deposito.column("Fecha Salida", width=110, minwidth=110, stretch=tk.NO)
+            self.treeview_deposito.heading("#0", text="Id")
+            self.treeview_deposito.heading("Producto", text="Producto")
+            self.treeview_deposito.heading("Fecha Entrada", text="Fecha Entrada")
+            self.treeview_deposito.heading("Fecha Salida", text="Fecha Salida")
+            self.treeview_deposito.grid(row=3,column=0,padx=5,pady=0)
+
+            self.treeview_deposito_scrollbar = customtkinter.CTkScrollbar(self.frame_4, height=124, command=self.treeview_deposito.yview)
+            self.treeview_deposito_scrollbar.grid(row=3, column=0,padx=(460,0))
 
             self.home_frame_4_label_producto = customtkinter.CTkLabel(self.frame_4, text="Producto", fg_color="transparent")
             self.home_frame_4_label_producto.place(x=50,y=248)
@@ -297,6 +304,63 @@ class App(customtkinter.CTk):
             self.frame_4.grid_forget()
         if name == "frame_5":
             self.frame_5.grid(row=0, column=1, sticky="nsew")
+
+            self.home_frame_5_button_1 = customtkinter.CTkButton(self.frame_5, text="Mensajes", image=self.mensajes_image)
+            self.home_frame_5_button_1.grid(row=1, column=0, padx=5, pady=20,sticky="e")
+
+            self.home_frame_5_banner_image_empleados_label = customtkinter.CTkLabel(self.frame_5, text="", image=self.banner_image_entregas)
+            self.home_frame_5_banner_image_empleados_label.grid(row=2, column=0, padx=5, pady=0)
+
+            style = ttk.Style()
+            style.theme_use("default")
+
+            if(self.appearance_mode_menu.get() == "Dark"):                
+                style.configure("Treeview", background="#b01685", foreground="#3B2682", rowheight=25, fieldbackground="#343638", bordercolor="#343638", borderwidth=0)
+                style.map('Treeview', background=[('selected', '#b01685')])
+            
+                style.configure("Treeview.Heading", background="#2E2F31", foreground="white", relief="flat")
+                style.map("Treeview.Heading", background=[('active', '#b01685')])
+                                  
+            elif(self.appearance_mode_menu.get() == "Light"):
+                style.configure("Treeview", background="#b01685", foreground="#3B2682", rowheight=25, fieldbackground="#F9F9FA", bordercolor="#343638", borderwidth=0)
+                style.map('Treeview', background=[('selected', '#b01685')])
+            
+                style.configure("Treeview.Heading", background="#E3E3E3", foreground="gray1", relief="flat")
+                style.map("Treeview.Heading", background=[('active', '#b01685')])   
+
+            self.treeview_entregas = ttk.Treeview(self.frame_5, style="Treeview", height=4)           
+            self.treeview_entregas["columns"] = ("Producto", "Cantidad", "Cliente")
+            self.treeview_entregas.column("#0", width=40, minwidth=40, stretch=tk.NO)
+            self.treeview_entregas.column("Producto", width=182, minwidth=182, stretch=tk.NO)
+            self.treeview_entregas.column("Cantidad", width=52, minwidth=52, stretch=tk.NO)
+            self.treeview_entregas.column("Cliente", width=172, minwidth=172, stretch=tk.NO)
+            self.treeview_entregas.heading("#0", text="Id")
+            self.treeview_entregas.heading("Producto", text="Producto")
+            self.treeview_entregas.heading("Cantidad", text="Cantidad")
+            self.treeview_entregas.heading("Cliente", text="Cliente")
+            self.treeview_entregas.grid(row=3,column=0,padx=5,pady=0)
+
+            self.treeview_entregas_scrollbar = customtkinter.CTkScrollbar(self.frame_5, height=124, command=self.treeview_entregas.yview)
+            self.treeview_entregas_scrollbar.grid(row=3, column=0,padx=(460,0))
+
+            self.home_frame_5_label_producto = customtkinter.CTkLabel(self.frame_5, text="Producto", fg_color="transparent")
+            self.home_frame_5_label_producto.place(x=50,y=248)
+            self.home_frame_5_label_fecha_entrada = customtkinter.CTkLabel(self.frame_5, text="Cantidad", fg_color="transparent")
+            self.home_frame_5_label_fecha_entrada.place(x=198,y=248)
+            self.home_frame_5_label_fecha_salida = customtkinter.CTkLabel(self.frame_5, text="Cliente", fg_color="transparent")
+            self.home_frame_5_label_fecha_salida.place(x=351,y=248)
+            
+            self.home_frame_5_entry_producto= customtkinter.CTkEntry(self.frame_5, width=120)
+            self.home_frame_5_entry_producto.grid(row=5,column=0,padx=(0,300),pady=40)
+            self.home_frame_5_entry_fecha_entrada = customtkinter.CTkEntry(self.frame_5, width=120)
+            self.home_frame_5_entry_fecha_entrada.grid(row=5,column=0,padx=(0,0),pady=40)
+            self.home_frame_5_entry_fecha_salida = customtkinter.CTkEntry(self.frame_5, width=120)
+            self.home_frame_5_entry_fecha_salida.grid(row=5,column=0,padx=(300,0),pady=5)
+
+            self.home_frame_5_button_2 = customtkinter.CTkButton(self.frame_5, text="Guardar", width=20)
+            self.home_frame_5_button_2.grid(row=7, column=0, padx=(260,0), pady=58)
+            self.home_frame_5_button_3 = customtkinter.CTkButton(self.frame_5, text="Eliminar", width=20)
+            self.home_frame_5_button_3.grid(row=7, column=0, padx=(400,0), pady=58)
         else:
             self.frame_5.grid_forget()
 

@@ -12,5 +12,5 @@ DEPÓSITO: Treeview stock + entry´s + botones AEM
 . Agregar, modificar y eliminar stock.
 
 ENTREGAS
-.  Treeview con entregas a hacer, que tenga, producto, cantidad, cliente con dni.
+. Treeview con entregas a hacer, que tenga, producto, cantidad, cliente con dni.
 . Agregar, modificar y entregar producto. 
