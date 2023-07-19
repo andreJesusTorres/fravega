@@ -23,6 +23,7 @@ class App(customtkinter.CTk):
         self.banner_image_compra = customtkinter.CTkImage(Image.open(os.path.join(image_path, "banner_compra.png")), size=(500, 50))
         self.banner_image_venta = customtkinter.CTkImage(Image.open(os.path.join(image_path, "banner_venta.png")), size=(500, 50))
         self.banner_image_empleados = customtkinter.CTkImage(Image.open(os.path.join(image_path, "banner_empleados.png")), size=(500, 50))
+        self.banner_image_deposito = customtkinter.CTkImage(Image.open(os.path.join(image_path, "banner_deposito.png")), size=(500, 50))
         self.home_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "inicio.png")), size=(20, 20))
         self.admin_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "admin.png")), size=(20, 20))
         self.rrhh_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "rrhh.png")), size=(20, 20))
@@ -238,6 +239,60 @@ class App(customtkinter.CTk):
             self.frame_3.grid_forget()
         if name == "frame_4":
             self.frame_4.grid(row=0, column=1, sticky="nsew")
+
+            self.home_frame_4_button_1 = customtkinter.CTkButton(self.frame_4, text="Mensajes", image=self.mensajes_image)
+            self.home_frame_4_button_1.grid(row=1, column=0, padx=5, pady=20,sticky="e")
+
+            self.home_frame_4_banner_image_deposito_label = customtkinter.CTkLabel(self.frame_4, text="", image=self.banner_image_deposito)
+            self.home_frame_4_banner_image_deposito_label.grid(row=2, column=0, padx=5, pady=0)
+
+            style = ttk.Style()
+            style.theme_use("default")
+
+            if(self.appearance_mode_menu.get() == "Dark"):                
+                style.configure("Treeview", background="#b01685", foreground="#3B2682", rowheight=25, fieldbackground="#343638", bordercolor="#343638", borderwidth=0)
+                style.map('Treeview', background=[('selected', '#b01685')])
+            
+                style.configure("Treeview.Heading", background="#2E2F31", foreground="white", relief="flat")
+                style.map("Treeview.Heading", background=[('active', '#b01685')])
+                                  
+            elif(self.appearance_mode_menu.get() == "Light"):
+                style.configure("Treeview", background="#b01685", foreground="#3B2682", rowheight=25, fieldbackground="#F9F9FA", bordercolor="#343638", borderwidth=0)
+                style.map('Treeview', background=[('selected', '#b01685')])
+            
+                style.configure("Treeview.Heading", background="#E3E3E3", foreground="gray1", relief="flat")
+                style.map("Treeview.Heading", background=[('active', '#b01685')])   
+
+            self.treeview_empleados = ttk.Treeview(self.frame_4, style="Treeview", height=4)           
+            self.treeview_empleados["columns"] = ("Producto", "Fecha Entrada", "Fecha Salida")
+            self.treeview_empleados.column("#0", width=40, minwidth=40, stretch=tk.NO)
+            self.treeview_empleados.column("Producto", width=182, minwidth=182, stretch=tk.NO)
+            self.treeview_empleados.column("Fecha Entrada", width=100, minwidth=100, stretch=tk.NO)
+            self.treeview_empleados.column("Fecha Salida", width=100, minwidth=100, stretch=tk.NO)
+            self.treeview_empleados.heading("#0", text="Id")
+            self.treeview_empleados.heading("Producto", text="Producto")
+            self.treeview_empleados.heading("Fecha Entrada", text="Fecha Entrada")
+            self.treeview_empleados.heading("Fecha Salida", text="Fecha Salida")
+            self.treeview_empleados.grid(row=3,column=0,padx=5,pady=0)
+
+            self.home_frame_4_label_producto = customtkinter.CTkLabel(self.frame_4, text="Producto", fg_color="transparent")
+            self.home_frame_4_label_producto.place(x=50,y=248)
+            self.home_frame_4_label_fecha_entrada = customtkinter.CTkLabel(self.frame_4, text="Fecha Entrada", fg_color="transparent")
+            self.home_frame_4_label_fecha_entrada.place(x=198,y=248)
+            self.home_frame_4_label_fecha_salida = customtkinter.CTkLabel(self.frame_4, text="Fecha Salida", fg_color="transparent")
+            self.home_frame_4_label_fecha_salida.place(x=351,y=248)
+            
+            self.home_frame_4_entry_producto= customtkinter.CTkEntry(self.frame_4, width=120)
+            self.home_frame_4_entry_producto.grid(row=5,column=0,padx=(0,300),pady=40)
+            self.home_frame_4_entry_fecha_entrada = customtkinter.CTkEntry(self.frame_4, width=120)
+            self.home_frame_4_entry_fecha_entrada.grid(row=5,column=0,padx=(0,0),pady=40)
+            self.home_frame_4_entry_fecha_salida = customtkinter.CTkEntry(self.frame_4, width=120)
+            self.home_frame_4_entry_fecha_salida.grid(row=5,column=0,padx=(300,0),pady=5)
+
+            self.home_frame_4_button_2 = customtkinter.CTkButton(self.frame_4, text="Guardar", width=20)
+            self.home_frame_4_button_2.grid(row=7, column=0, padx=(260,0), pady=58)
+            self.home_frame_4_button_3 = customtkinter.CTkButton(self.frame_4, text="Eliminar", width=20)
+            self.home_frame_4_button_3.grid(row=7, column=0, padx=(400,0), pady=58)
         else:
             self.frame_4.grid_forget()
         if name == "frame_5":
