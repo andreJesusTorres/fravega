@@ -236,10 +236,12 @@ class App(customtkinter.CTk):
             self.home_frame_3_entry_salario = customtkinter.CTkEntry(self.frame_3)
             self.home_frame_3_entry_salario.grid(row=6,column=0,padx=(250,0),pady=5)
 
-            self.home_frame_3_button_2 = customtkinter.CTkButton(self.frame_3, text="Guardar", width=20)
-            self.home_frame_3_button_2.grid(row=7, column=0, padx=(260,0), pady=20)
-            self.home_frame_3_button_3 = customtkinter.CTkButton(self.frame_3, text="Eliminar", width=20)
-            self.home_frame_3_button_3.grid(row=7, column=0, padx=(400,0), pady=20)
+            self.home_frame_3_button_2 = customtkinter.CTkButton(self.frame_3, text="Modificar", width=20)
+            self.home_frame_3_button_2.grid(row=7, column=0, padx=(120,0), pady=20)
+            self.home_frame_3_button_3 = customtkinter.CTkButton(self.frame_3, text="Guardar", width=20)
+            self.home_frame_3_button_3.grid(row=7, column=0, padx=(260,0), pady=20)
+            self.home_frame_3_button_4 = customtkinter.CTkButton(self.frame_3, text="Eliminar", width=20)
+            self.home_frame_3_button_4.grid(row=7, column=0, padx=(400,0), pady=20)
         else:
             self.frame_3.grid_forget()
         if name == "frame_4":
@@ -391,10 +393,10 @@ class App(customtkinter.CTk):
             self.home_frame_label_4.destroy()
 
     def login_event(self):
-        conn = sqlite3.connect("data.db")
+        conn = sqlite3.connect("fravega_data.db")
         cursor = conn.cursor()
         data = (self.home_frame_entry_1.get(), self.home_frame_entry_2.get())
-        cursor.execute("SELECT * FROM usuarios WHERE nombre = ? AND clave = ?", (data))
+        cursor.execute("SELECT * FROM user WHERE usuario = ? AND clave = ?", (data))
         fetchall = cursor.fetchall()
 
         if (fetchall):
