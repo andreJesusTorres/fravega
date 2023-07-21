@@ -115,9 +115,10 @@ class App(customtkinter.CTk):
         else:
             self.home_frame.grid_forget()
         if name == "frame_2":
+            
             self.frame_2.grid(row=0, column=1,sticky="nsew")
 
-            self.home_frame_2_button_1 = customtkinter.CTkButton(self.frame_2, text="Mensajes", image=self.mensajes_image)
+            self.home_frame_2_button_1 = customtkinter.CTkButton(self.frame_2, text="Mensajes", image=self.mensajes_image,command=self.email_event)
             self.home_frame_2_button_1.grid(row=2, column=0, padx=5, pady=20,sticky="e")
 
             self.home_frame_2_banner_image_compra_label = customtkinter.CTkLabel(self.frame_2, text="", image=self.banner_image_compra)
@@ -445,6 +446,13 @@ class App(customtkinter.CTk):
 
     def frame_5_button_event(self):
         self.select_frame_by_name("frame_5")
+
+    def email_event(self):
+        app_email = customtkinter.CTk()
+        app_email.geometry("650x400")
+        app_email.title("Email Fravega")
+
+        app_email.mainloop()
 
     def change_appearance_mode_event(self, new_appearance_mode):
         customtkinter.set_appearance_mode(new_appearance_mode)
