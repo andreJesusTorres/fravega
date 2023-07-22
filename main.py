@@ -203,13 +203,15 @@ class App(customtkinter.CTk):
                 style.map("Treeview.Heading", background=[('active', '#b01685')])   
 
             self.treeview_empleados = ttk.Treeview(self.frame_3, style="Treeview", height=4)           
-            self.treeview_empleados["columns"] = ("Nombre y Apellido", "Area", "Salario", "Asistencia")
-            self.treeview_empleados.column("#0", width=40, minwidth=40, stretch=tk.NO)
+            self.treeview_empleados["columns"] = ("DNI","Nombre y Apellido", "Area", "Salario", "Asistencia")
+            self.treeview_empleados.column("#0", width=0, minwidth=0, stretch=tk.NO)
+            self.treeview_empleados.column("DNI", width=50, minwidth=50, stretch=tk.NO)
             self.treeview_empleados.column("Nombre y Apellido", width=182, minwidth=182, stretch=tk.NO)
             self.treeview_empleados.column("Area", width=82, minwidth=82, stretch=tk.NO)
             self.treeview_empleados.column("Salario", width=82, minwidth=82, stretch=tk.NO)
             self.treeview_empleados.column("Asistencia", width=82, minwidth=82, stretch=tk.NO)
-            self.treeview_empleados.heading("#0", text="DNI")
+            self.treeview_empleados.heading("#0", text="")
+            self.treeview_empleados.heading("DNI", text="DNI")
             self.treeview_empleados.heading("Nombre y Apellido", text="Nombre y Apellido")
             self.treeview_empleados.heading("Area", text="Area")
             self.treeview_empleados.heading("Salario", text="Salario")
@@ -218,6 +220,7 @@ class App(customtkinter.CTk):
 
             self.treeview_empleados_show(self.treeview_empleados)
             self.treeview_empleados.bind("<<TreeviewSelect>>", lambda event: self.treeview_empleados_show_entry(event, self.treeview_empleados))
+            self.treeview_empleados.bind("<Escape>", lambda event: self.clear_entries_and_selection(event))
 
             self.treeview_empleados_scrollbar = customtkinter.CTkScrollbar(self.frame_3, height=124, command=self.treeview_empleados.yview)
             self.treeview_empleados_scrollbar.grid(row=3, column=0,padx=(460,0))
@@ -470,22 +473,22 @@ class App(customtkinter.CTk):
     #Funciones de RRHH   
 
     def treeview_empleados_show(self, treeview_empleados):
-                try:
-                    conn = sqlite3.connect("fravega_data.db")
-                    cursor = conn.cursor()
-                    cursor.execute("SELECT dni, nya, area, sal, asist FROM rh")
-                    fetchall = cursor.fetchall()
-                    conn.close()
+        try:
+            conn = sqlite3.connect("fravega_data.db")
+            cursor = conn.cursor()
+            cursor.execute("SELECT dni, nya, area, sal, asist FROM rh")
+            fetchall = cursor.fetchall()
+            conn.close()
 
-                    for fila in treeview_empleados.get_children():
-                        treeview_empleados.delete(fila)
+            for fila in treeview_empleados.get_children():
+                treeview_empleados.delete(fila)
 
-                    for dato in fetchall:
-                        treeview_empleados.insert("", "end", values=dato)
+            for dato in fetchall:
+                treeview_empleados.insert("", "end", values=dato)
 
-                except sqlite3.Error as error:
-                    mensaje_error = "Error al acceder a la base de datos: " + str(error)
-                    tk.messagebox.showerror("Error", mensaje_error)
+        except sqlite3.Error as error:
+            mensaje_error = "Error al acceder a la base de datos: " + str(error)
+            tk.messagebox.showerror("Error", mensaje_error)
 
     def treeview_empleados_show_entry(self, event, treeview_empleados):
         seleccion = treeview_empleados.selection()
@@ -561,7 +564,7 @@ class App(customtkinter.CTk):
             cursor = conexion.cursor()
 
             cursor.execute("INSERT INTO rh (dni, nya, area, sal, asist) VALUES (?, ?, ?, ?, ?)",
-                           (dni, nya, area, salario, 0))
+                           (dni, nya, area, salario, "Pendiente"))
             conexion.commit()
 
             conexion.close()
@@ -592,6 +595,15 @@ class App(customtkinter.CTk):
     def validate_area(self, new_value):
         return all(c.isalpha() or c.isspace() for c in new_value)
 
+    def clear_entries_and_selection(self, event):
+    
+        self.home_frame_3_entry_dni.delete(0, tk.END)
+        self.home_frame_3_entry_nombreyapellido.delete(0, tk.END)
+        self.home_frame_3_entry_area.delete(0, tk.END)
+        self.home_frame_3_entry_salario.delete(0, tk.END)
+
+        self.treeview_empleados.selection_remove(self.treeview_empleados.focus())
+    
     #Funcion apariencia
 
     def change_appearance_mode_event(self, new_appearance_mode):
