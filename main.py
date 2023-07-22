@@ -128,14 +128,14 @@ class App(customtkinter.CTk):
             style.theme_use("default")    
 
             if(self.appearance_mode_menu.get() == "Dark"):                
-                style.configure("Treeview", background="#b01685", foreground="#3B2682", rowheight=25, fieldbackground="#343638", bordercolor="#343638", borderwidth=0)
+                style.configure("Treeview", background="#343638", foreground="white", rowheight=25, fieldbackground="#343638", bordercolor="#343638", borderwidth=0)
                 style.map('Treeview', background=[('selected', '#b01685')])
             
                 style.configure("Treeview.Heading", background="#2E2F31", foreground="white", relief="flat")
                 style.map("Treeview.Heading", background=[('active', '#b01685')])
                                   
             elif(self.appearance_mode_menu.get() == "Light"):
-                style.configure("Treeview", background="#b01685", foreground="#3B2682", rowheight=25, fieldbackground="#F9F9FA", bordercolor="#343638", borderwidth=0)
+                style.configure("Treeview", background="#F9F9FA", foreground="black", rowheight=25, fieldbackground="#F9F9FA", bordercolor="#343638", borderwidth=0)
                 style.map('Treeview', background=[('selected', '#b01685')])
             
                 style.configure("Treeview.Heading", background="#E3E3E3", foreground="gray1", relief="flat")
@@ -189,14 +189,14 @@ class App(customtkinter.CTk):
             style.theme_use("default")
 
             if(self.appearance_mode_menu.get() == "Dark"):                
-                style.configure("Treeview", background="#b01685", foreground="#3B2682", rowheight=25, fieldbackground="#343638", bordercolor="#343638", borderwidth=0)
+                style.configure("Treeview", background="#343638", foreground="white", rowheight=25, fieldbackground="#343638", bordercolor="#343638", borderwidth=0)
                 style.map('Treeview', background=[('selected', '#b01685')])
             
                 style.configure("Treeview.Heading", background="#2E2F31", foreground="white", relief="flat")
                 style.map("Treeview.Heading", background=[('active', '#b01685')])
                                   
             elif(self.appearance_mode_menu.get() == "Light"):
-                style.configure("Treeview", background="#b01685", foreground="#3B2682", rowheight=25, fieldbackground="#F9F9FA", bordercolor="#343638", borderwidth=0)
+                style.configure("Treeview", background="#F9F9FA", foreground="black", rowheight=25, fieldbackground="#F9F9FA", bordercolor="#343638", borderwidth=0)
                 style.map('Treeview', background=[('selected', '#b01685')])
             
                 style.configure("Treeview.Heading", background="#E3E3E3", foreground="gray1", relief="flat")
@@ -245,9 +245,8 @@ class App(customtkinter.CTk):
             self.home_frame_3_entry_area.configure(validate="key", validatecommand=(self.register(self.validate_area), "%P"))
             self.home_frame_3_entry_salario.configure(validate="key", validatecommand=(self.register(self.validate_salario), "%P"))
 
-
             self.home_frame_3_button_2 = customtkinter.CTkButton(self.frame_3, text="Modificar", width=20, command=self.treeview_empleados_modify)
-            self.home_frame_3_button_2.grid(row=7, column=0, padx=(120,0), pady=20)
+            self.home_frame_3_button_2.grid(row=7, column=0, padx=(110,0), pady=20)
             self.home_frame_3_button_3 = customtkinter.CTkButton(self.frame_3, text="Guardar", width=20, command=self.treeview_empleados_add)
             self.home_frame_3_button_3.grid(row=7, column=0, padx=(260,0), pady=20)
             self.home_frame_3_button_4 = customtkinter.CTkButton(self.frame_3, text="Eliminar", width=20, command=self.treeview_empleados_delete)
@@ -267,14 +266,14 @@ class App(customtkinter.CTk):
             style.theme_use("default")
 
             if(self.appearance_mode_menu.get() == "Dark"):                
-                style.configure("Treeview", background="#b01685", foreground="#3B2682", rowheight=25, fieldbackground="#343638", bordercolor="#343638", borderwidth=0)
+                style.configure("Treeview", background="#343638", foreground="white", rowheight=25, fieldbackground="#343638", bordercolor="#343638", borderwidth=0)
                 style.map('Treeview', background=[('selected', '#b01685')])
             
                 style.configure("Treeview.Heading", background="#2E2F31", foreground="white", relief="flat")
                 style.map("Treeview.Heading", background=[('active', '#b01685')])
                                   
             elif(self.appearance_mode_menu.get() == "Light"):
-                style.configure("Treeview", background="#b01685", foreground="#3B2682", rowheight=25, fieldbackground="#F9F9FA", bordercolor="#343638", borderwidth=0)
+                style.configure("Treeview", background="#F9F9FA", foreground="black", rowheight=25, fieldbackground="#F9F9FA", bordercolor="#343638", borderwidth=0)
                 style.map('Treeview', background=[('selected', '#b01685')])
             
                 style.configure("Treeview.Heading", background="#E3E3E3", foreground="gray1", relief="flat")
@@ -328,14 +327,14 @@ class App(customtkinter.CTk):
             style.theme_use("default")
 
             if(self.appearance_mode_menu.get() == "Dark"):                
-                style.configure("Treeview", background="#b01685", foreground="#3B2682", rowheight=25, fieldbackground="#343638", bordercolor="#343638", borderwidth=0)
+                style.configure("Treeview", background="#343638", foreground="white", rowheight=25, fieldbackground="#343638", bordercolor="#343638", borderwidth=0)
                 style.map('Treeview', background=[('selected', '#b01685')])
             
                 style.configure("Treeview.Heading", background="#2E2F31", foreground="white", relief="flat")
                 style.map("Treeview.Heading", background=[('active', '#b01685')])
                                   
             elif(self.appearance_mode_menu.get() == "Light"):
-                style.configure("Treeview", background="#b01685", foreground="#3B2682", rowheight=25, fieldbackground="#F9F9FA", bordercolor="#343638", borderwidth=0)
+                style.configure("Treeview", background="#F9F9FA", foreground="black", rowheight=25, fieldbackground="#F9F9FA", bordercolor="#343638", borderwidth=0)
                 style.map('Treeview', background=[('selected', '#b01685')])
             
                 style.configure("Treeview.Heading", background="#E3E3E3", foreground="gray1", relief="flat")
