@@ -6,6 +6,8 @@ import sqlite3
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
+from tkinter import filedialog
+from PIL import Image, ImageTk
 
 class App(customtkinter.CTk):
     def __init__(self):
@@ -18,20 +20,20 @@ class App(customtkinter.CTk):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
 
-        image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_images")
-        self.logo_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "logo.png")), size=(26, 26))
-        self.banner_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "banner.png")), size=(480, 150))
-        self.banner_image_compra = customtkinter.CTkImage(Image.open(os.path.join(image_path, "banner_compra.png")), size=(500, 50))
-        self.banner_image_venta = customtkinter.CTkImage(Image.open(os.path.join(image_path, "banner_venta.png")), size=(500, 50))
-        self.banner_image_empleados = customtkinter.CTkImage(Image.open(os.path.join(image_path, "banner_empleados.png")), size=(500, 50))
-        self.banner_image_deposito = customtkinter.CTkImage(Image.open(os.path.join(image_path, "banner_deposito.png")), size=(500, 50))
-        self.banner_image_entregas = customtkinter.CTkImage(Image.open(os.path.join(image_path, "banner_entregas.png")), size=(500, 50))
-        self.home_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "inicio.png")), size=(20, 20))
-        self.admin_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "admin.png")), size=(20, 20))
-        self.rrhh_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "rrhh.png")), size=(20, 20))
-        self.deposito_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "deposito.png")), size=(20, 20))
-        self.entregas_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "entregas.png")), size=(20, 20))
-        self.mensajes_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "mensajes.png")), size=(20, 20))
+        self.image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "images")
+        self.logo_image = customtkinter.CTkImage(Image.open(os.path.join(self.image_path, "logo.png")), size=(26, 26))
+        self.banner_image = customtkinter.CTkImage(Image.open(os.path.join(self.image_path, "banner.png")), size=(480, 150))
+        self.banner_image_compra = customtkinter.CTkImage(Image.open(os.path.join(self.image_path, "banner_compra.png")), size=(500, 50))
+        self.banner_image_venta = customtkinter.CTkImage(Image.open(os.path.join(self.image_path, "banner_venta.png")), size=(500, 50))
+        self.banner_image_empleados = customtkinter.CTkImage(Image.open(os.path.join(self.image_path, "banner_empleados.png")), size=(500, 50))
+        self.banner_image_deposito = customtkinter.CTkImage(Image.open(os.path.join(self.image_path, "banner_deposito.png")), size=(500, 50))
+        self.banner_image_entregas = customtkinter.CTkImage(Image.open(os.path.join(self.image_path, "banner_entregas.png")), size=(500, 50))
+        self.home_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "inicio.png")), size=(20, 20))
+        self.admin_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "admin.png")), size=(20, 20))
+        self.rrhh_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "rrhh.png")), size=(20, 20))
+        self.deposito_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "deposito.png")), size=(20, 20))
+        self.entregas_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "entregas.png")), size=(20, 20))
+        self.mensajes_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "mensajes.png")), size=(20, 20))
 
         self.navigation_frame = customtkinter.CTkFrame(self, corner_radius=0)
         self.navigation_frame.grid(row=0, column=0, sticky="nsew")
@@ -118,8 +120,8 @@ class App(customtkinter.CTk):
         if name == "frame_2":
             self.frame_2.grid(row=0, column=1,sticky="nsew")
 
-            self.home_frame_2_button_1 = customtkinter.CTkButton(self.frame_2, text="Mensajes", image=self.mensajes_image,command=self.email_event)
-            self.home_frame_2_button_1.grid(row=2, column=0, padx=5, pady=20,sticky="e")
+            self.home_frame_2_button_1 = customtkinter.CTkButton(self.frame_2, text="Mensaje", width=2, image=self.mensajes_image)
+            self.home_frame_2_button_1.grid(row=1, column=0, padx=5, pady=20,sticky="e")
 
             self.home_frame_2_banner_image_compra_label = customtkinter.CTkLabel(self.frame_2, text="", image=self.banner_image_compra)
             self.home_frame_2_banner_image_compra_label.grid(row=3, column=0, padx=5, pady=0)
@@ -179,7 +181,7 @@ class App(customtkinter.CTk):
 
             self.frame_3.grid(row=0, column=1, sticky="nsew")
 
-            self.home_frame_3_button_1 = customtkinter.CTkButton(self.frame_3, text="Mensajes", image=self.mensajes_image)
+            self.home_frame_3_button_1 = customtkinter.CTkButton(self.frame_3, text="Mensaje", width=2, image=self.mensajes_image)
             self.home_frame_3_button_1.grid(row=1, column=0, padx=5, pady=20,sticky="e")
 
             self.home_frame_3_banner_image_empleados_label = customtkinter.CTkLabel(self.frame_3, text="", image=self.banner_image_empleados)
@@ -188,7 +190,7 @@ class App(customtkinter.CTk):
             style = ttk.Style()
             style.theme_use("default")
 
-            if(self.appearance_mode_menu.get() == "Dark"):                
+            if(self.appearance_mode_menu.get() == "Dark"):
                 style.configure("Treeview", background="#343638", foreground="white", rowheight=25, fieldbackground="#343638", bordercolor="#343638", borderwidth=0)
                 style.map('Treeview', background=[('selected', '#b01685')])
             
@@ -203,19 +205,19 @@ class App(customtkinter.CTk):
                 style.map("Treeview.Heading", background=[('active', '#b01685')])   
 
             self.treeview_empleados = ttk.Treeview(self.frame_3, style="Treeview", height=4)           
-            self.treeview_empleados["columns"] = ("DNI","Nombre y Apellido", "Area", "Salario", "Asistencia")
-            self.treeview_empleados.column("#0", width=0, minwidth=0, stretch=tk.NO)
+            self.treeview_empleados["columns"] = ("DNI","Nombre y Apellido", "Area", "Salario", "Documentación")
+            self.treeview_empleados.column("#0", width=0, minwidth=0)
             self.treeview_empleados.column("DNI", width=50, minwidth=50, stretch=tk.NO)
-            self.treeview_empleados.column("Nombre y Apellido", width=182, minwidth=182, stretch=tk.NO)
-            self.treeview_empleados.column("Area", width=82, minwidth=82, stretch=tk.NO)
-            self.treeview_empleados.column("Salario", width=82, minwidth=82, stretch=tk.NO)
-            self.treeview_empleados.column("Asistencia", width=82, minwidth=82, stretch=tk.NO)
+            self.treeview_empleados.column("Nombre y Apellido", width=152, minwidth=152, stretch=tk.NO)
+            self.treeview_empleados.column("Area", width=55, minwidth=55, stretch=tk.NO)
+            self.treeview_empleados.column("Salario", width=72, minwidth=72, stretch=tk.NO)
+            self.treeview_empleados.column("Documentación", width=115, minwidth=115, stretch=tk.NO)
             self.treeview_empleados.heading("#0", text="")
             self.treeview_empleados.heading("DNI", text="DNI")
             self.treeview_empleados.heading("Nombre y Apellido", text="Nombre y Apellido")
             self.treeview_empleados.heading("Area", text="Area")
             self.treeview_empleados.heading("Salario", text="Salario")
-            self.treeview_empleados.heading("Asistencia", text="Asistencia")
+            self.treeview_empleados.heading("Documentación", text="Documentación")
             self.treeview_empleados.grid(row=3,column=0,padx=5,pady=0)
 
             self.treeview_empleados_show(self.treeview_empleados)
@@ -230,36 +232,45 @@ class App(customtkinter.CTk):
             self.home_frame_3_label_nombreyapellido = customtkinter.CTkLabel(self.frame_3, text="Nombre y Apellido", fg_color="transparent")
             self.home_frame_3_label_nombreyapellido.place(x=312,y=247)
             self.home_frame_3_label_area = customtkinter.CTkLabel(self.frame_3, text="Area", fg_color="transparent")
-            self.home_frame_3_label_area.place(x=65,y=319)
+            self.home_frame_3_label_area.place(x=65,y=312)
             self.home_frame_3_label_salario = customtkinter.CTkLabel(self.frame_3, text="Salario", fg_color="transparent")
-            self.home_frame_3_label_salario.place(x=312,y=319)
+            self.home_frame_3_label_salario.place(x=312,y=312)
+            self.home_frame_3_label_documentación = customtkinter.CTkLabel(self.frame_3, text="Documentación", fg_color="transparent")
+            self.home_frame_3_label_documentación.place(x=65,y=378)
+            self.home_frame_3_label_imagen = tk.Label(self.frame_3)
+            self.home_frame_3_label_imagen.place(x=215,y=280)
             
             self.home_frame_3_entry_dni = customtkinter.CTkEntry(self.frame_3)
-            self.home_frame_3_entry_dni.grid(row=5,column=0,padx=(0,250),pady=40)
+            self.home_frame_3_entry_dni.grid(row=5,column=0,padx=(0,250),pady=31)
             self.home_frame_3_entry_nombreyapellido = customtkinter.CTkEntry(self.frame_3)
-            self.home_frame_3_entry_nombreyapellido.grid(row=5,column=0,padx=(250,0),pady=40)
+            self.home_frame_3_entry_nombreyapellido.grid(row=5,column=0,padx=(250,0),pady=31)
             self.home_frame_3_entry_area = customtkinter.CTkEntry(self.frame_3)
             self.home_frame_3_entry_area.grid(row=6,column=0,padx=(0,250),pady=5)
             self.home_frame_3_entry_salario = customtkinter.CTkEntry(self.frame_3)
             self.home_frame_3_entry_salario.grid(row=6,column=0,padx=(250,0),pady=5)
-
+            self.home_frame_3_entry_documentación = customtkinter.CTkEntry(self.frame_3)
+            self.home_frame_3_entry_documentación.grid(row=7,column=0,padx=(0,250),pady=37)
+            self.home_frame_3_entry_imagen = customtkinter.CTkEntry(self.frame_3)
+            self.home_frame_3_entry_imagen.grid(row=23,column=0,padx=(0,0),pady=37)
+            
             self.home_frame_3_entry_dni.configure(validate="key", validatecommand=(self.register(self.validate_dni), "%P"))
             self.home_frame_3_entry_nombreyapellido.configure(validate="key", validatecommand=(self.register(self.validate_nombre), "%P"))
             self.home_frame_3_entry_area.configure(validate="key", validatecommand=(self.register(self.validate_area), "%P"))
             self.home_frame_3_entry_salario.configure(validate="key", validatecommand=(self.register(self.validate_salario), "%P"))
 
             self.home_frame_3_button_2 = customtkinter.CTkButton(self.frame_3, text="Modificar", width=20, command=self.treeview_empleados_modify)
-            self.home_frame_3_button_2.grid(row=7, column=0, padx=(110,0), pady=20)
+            self.home_frame_3_button_2.grid(row=7, column=0, padx=(130,0), pady=20)
             self.home_frame_3_button_3 = customtkinter.CTkButton(self.frame_3, text="Guardar", width=20, command=self.treeview_empleados_add)
-            self.home_frame_3_button_3.grid(row=7, column=0, padx=(260,0), pady=20)
+            self.home_frame_3_button_3.grid(row=7, column=0, padx=(270,0), pady=20)
             self.home_frame_3_button_4 = customtkinter.CTkButton(self.frame_3, text="Eliminar", width=20, command=self.treeview_empleados_delete)
             self.home_frame_3_button_4.grid(row=7, column=0, padx=(400,0), pady=20)
+
         else:
             self.frame_3.grid_forget()
         if name == "frame_4":
             self.frame_4.grid(row=0, column=1, sticky="nsew")
 
-            self.home_frame_4_button_1 = customtkinter.CTkButton(self.frame_4, text="Mensajes", image=self.mensajes_image)
+            self.home_frame_4_button_1 = customtkinter.CTkButton(self.frame_4, text="Mensaje", width=2, image=self.mensajes_image)
             self.home_frame_4_button_1.grid(row=1, column=0, padx=5, pady=20,sticky="e")
 
             self.home_frame_4_banner_image_deposito_label = customtkinter.CTkLabel(self.frame_4, text="", image=self.banner_image_deposito)
@@ -320,7 +331,7 @@ class App(customtkinter.CTk):
         if name == "frame_5":
             self.frame_5.grid(row=0, column=1, sticky="nsew")
 
-            self.home_frame_5_button_1 = customtkinter.CTkButton(self.frame_5, text="Mensajes", image=self.mensajes_image)
+            self.home_frame_5_button_1 = customtkinter.CTkButton(self.frame_5, text="Mensaje", width=2, image=self.mensajes_image)
             self.home_frame_5_button_1.grid(row=1, column=0, padx=5, pady=20,sticky="e")
 
             self.home_frame_5_banner_image_empleados_label = customtkinter.CTkLabel(self.frame_5, text="", image=self.banner_image_entregas)
@@ -476,7 +487,7 @@ class App(customtkinter.CTk):
         try:
             conn = sqlite3.connect("fravega_data.db")
             cursor = conn.cursor()
-            cursor.execute("SELECT dni, nya, area, sal, asist FROM rh")
+            cursor.execute("SELECT dni, nya, area, sal, doc, img FROM rh")
             fetchall = cursor.fetchall()
             conn.close()
 
@@ -502,6 +513,20 @@ class App(customtkinter.CTk):
             self.home_frame_3_entry_area.insert(0, item[2])
             self.home_frame_3_entry_salario.delete(0, tk.END)
             self.home_frame_3_entry_salario.insert(0, item[3])
+            self.home_frame_3_entry_documentación.delete(0, tk.END)
+            self.home_frame_3_entry_documentación.insert(0, item[4])
+
+            imagen_ruta = item[5]  
+
+            if imagen_ruta:
+                img = Image.open(imagen_ruta)
+                img_resized = img.resize((75, 75)) 
+                self.empleado_image = ImageTk.PhotoImage(img_resized) 
+                self.home_frame_3_label_imagen.configure(image=self.empleado_image)
+
+            else:
+                # Si no hay ruta de imagen, mostrar una imagen de placeholder o dejar en blanco
+                self.home_frame_3_label_imagen.config(image=None)
 
     def treeview_empleados_delete(self):
         question = messagebox.askquestion("Cuidado","¿Desea eliminar definitivamente el empleado?")
@@ -522,6 +547,7 @@ class App(customtkinter.CTk):
                 self.home_frame_3_entry_nombreyapellido.delete(0, tk.END)
                 self.home_frame_3_entry_area.delete(0, tk.END)
                 self.home_frame_3_entry_salario.delete(0, tk.END)
+                self.home_frame_3_entry_documentación.delete(0, tk.END)
 
                 messagebox.showinfo("Exito","El empleado fue dado de baja.")
 
@@ -539,12 +565,19 @@ class App(customtkinter.CTk):
             nya = self.home_frame_3_entry_nombreyapellido.get()
             area = self.home_frame_3_entry_area.get()
             salario = self.home_frame_3_entry_salario.get()
+            doc = self.home_frame_3_entry_documentación.get()
+            img = self.home_frame_3_entry_imagen.get()
 
             try:
                 conexion = sqlite3.connect("fravega_data.db")
                 cursor = conexion.cursor()
 
-                cursor.execute("UPDATE rh SET nya=?, area=?, sal=? WHERE dni=?", (nya, area, salario, dni))
+                question = messagebox.askquestion("Cuidado","¿Desea modificar la imagen?")
+                if (question == "yes"):
+                    self.load_image()
+                    img = self.home_frame_3_entry_imagen.get()
+
+                cursor.execute("UPDATE rh SET nya=?, area=?, sal=?,doc=?,img=? WHERE dni=?", (nya, area, salario, doc, img, dni))
                 conexion.commit()
                 conexion.close()
 
@@ -554,6 +587,8 @@ class App(customtkinter.CTk):
                 self.home_frame_3_entry_nombreyapellido.delete(0, tk.END)
                 self.home_frame_3_entry_area.delete(0, tk.END)
                 self.home_frame_3_entry_salario.delete(0, tk.END)
+                self.home_frame_3_entry_documentación.delete(0, tk.END)
+                self.home_frame_3_entry_imagen.delete(0, tk.END)
 
                 messagebox.showinfo("Exito","El empleado fue modificado.")
 
@@ -564,26 +599,50 @@ class App(customtkinter.CTk):
             return
 
     def treeview_empleados_add(self):
-        question = messagebox.askquestion("Cuidado","¿Desea agregar este nuevo empleado?")
+        def dni_verification(dni):
+            try:
+                conexion = sqlite3.connect("fravega_data.db")
+                cursor = conexion.cursor()
 
-        if (question == "yes"):
+                cursor.execute("SELECT dni FROM rh WHERE dni = ?", (dni,))
+                resultado = cursor.fetchone()
+
+                conexion.close()
+
+                if resultado:
+                    return True
+                else:
+                    return False
+
+            except sqlite3.Error as error:
+                mensaje_error = "Error al verificar el DNI: " + str(error)
+                messagebox.showerror("Error", mensaje_error)
+                return True
+
+        question = messagebox.askquestion("Cuidado", "¿Desea agregar este nuevo empleado?")
+
+        if question == "yes":
             dni = self.home_frame_3_entry_dni.get()
             nya = self.home_frame_3_entry_nombreyapellido.get()
             area = self.home_frame_3_entry_area.get()
             salario = self.home_frame_3_entry_salario.get()
+            doc = self.home_frame_3_entry_documentación.get()
 
-            if not dni or not nya or not area or not salario:
+            if not dni or not nya or not area or not salario or not doc:
                 messagebox.showwarning("Campos vacíos", "Por favor, complete todos los campos.")
+                return
+
+            if dni_verification(dni):
+                messagebox.showwarning("Cuidado", "El DNI ya está registrado. No se puede agregar nuevamente.")
                 return
 
             try:
                 conexion = sqlite3.connect("fravega_data.db")
                 cursor = conexion.cursor()
 
-                cursor.execute("INSERT INTO rh (dni, nya, area, sal, asist) VALUES (?, ?, ?, ?, ?)",
-                            (dni, nya, area, salario, "Pendiente"))
+                cursor.execute("INSERT INTO rh (dni, nya, area, sal, doc) VALUES (?, ?, ?, ?, ?)",
+                            (dni, nya, area, salario, doc, img))
                 conexion.commit()
-
                 conexion.close()
 
                 self.treeview_empleados_show(self.treeview_empleados)
@@ -591,8 +650,10 @@ class App(customtkinter.CTk):
                 self.home_frame_3_entry_nombreyapellido.delete(0, tk.END)
                 self.home_frame_3_entry_area.delete(0, tk.END)
                 self.home_frame_3_entry_salario.delete(0, tk.END)
+                self.home_frame_3_entry_documentación.delete(0, tk.END)
+                self.home_frame_3_entry_imagen.delete(0, tk.END)
 
-                messagebox.showinfo("Exito","El empleado fue dado de alta.")
+                messagebox.showinfo("Éxito", "El empleado fue dado de alta.")
 
             except sqlite3.Error as error:
                 mensaje_error = "Error al agregar el empleado: " + str(error)
@@ -625,6 +686,11 @@ class App(customtkinter.CTk):
 
         self.treeview_empleados.selection_remove(self.treeview_empleados.focus())
     
+    def load_image(self):
+        ruta_imagen = filedialog.askopenfilename(title="Seleccionar imagen", filetypes=[("Imagen", "*.png;*.jpg;*.jpeg")])
+        self.home_frame_3_entry_imagen.delete(0, tk.END)
+        self.home_frame_3_entry_imagen.insert(0, ruta_imagen)
+    
     #Funcion apariencia
 
     def change_appearance_mode_event(self, new_appearance_mode):
@@ -640,6 +706,6 @@ class App(customtkinter.CTk):
 
 if __name__ == "__main__":
     app = App()
-    app.iconbitmap("test_images/fravega.ico")
+    app.iconbitmap("images/fravega.ico")
     app.resizable(0,0)
     app.mainloop()
