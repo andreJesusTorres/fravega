@@ -115,7 +115,7 @@ class App(customtkinter.CTk):
             self.home_frame.grid(row=0, column=1, sticky="nsew")
         else:
             self.home_frame.grid_forget()
-        if name == "frame_2":            
+        if name == "frame_2":
             self.frame_2.grid(row=0, column=1,sticky="nsew")
 
             self.home_frame_2_button_1 = customtkinter.CTkButton(self.frame_2, text="Mensajes", image=self.mensajes_image,command=self.email_event)
@@ -504,80 +504,101 @@ class App(customtkinter.CTk):
             self.home_frame_3_entry_salario.insert(0, item[3])
 
     def treeview_empleados_delete(self):
-        dni = self.home_frame_3_entry_dni.get()
-        try:
-            conexion = sqlite3.connect("fravega_data.db")
-            cursor = conexion.cursor()
+        question = messagebox.askquestion("Cuidado","¿Desea eliminar definitivamente el empleado?")
 
-            cursor.execute("DELETE FROM rh WHERE dni = ?", (dni,))
-            conexion.commit()
-            conexion.close()
+        if (question == "yes"):
+            dni = self.home_frame_3_entry_dni.get()
+            try:
+                conexion = sqlite3.connect("fravega_data.db")
+                cursor = conexion.cursor()
 
-            self.treeview_empleados_show(self.treeview_empleados)
+                cursor.execute("DELETE FROM rh WHERE dni = ?", (dni,))
+                conexion.commit()
+                conexion.close()
 
-            self.home_frame_3_entry_dni.delete(0, tk.END)
-            self.home_frame_3_entry_nombreyapellido.delete(0, tk.END)
-            self.home_frame_3_entry_area.delete(0, tk.END)
-            self.home_frame_3_entry_salario.delete(0, tk.END)
+                self.treeview_empleados_show(self.treeview_empleados)
 
-        except sqlite3.Error as error:
-            mensaje_error = "Error al eliminar el empleado: " + str(error)
-            messagebox.showerror("Error", mensaje_error)
+                self.home_frame_3_entry_dni.delete(0, tk.END)
+                self.home_frame_3_entry_nombreyapellido.delete(0, tk.END)
+                self.home_frame_3_entry_area.delete(0, tk.END)
+                self.home_frame_3_entry_salario.delete(0, tk.END)
 
+                messagebox.showinfo("Exito","El empleado fue dado de baja.")
+
+            except sqlite3.Error as error:
+                mensaje_error = "Error al eliminar el empleado: " + str(error)
+                messagebox.showerror("Error", mensaje_error)
+        else:
+            return
+        
     def treeview_empleados_modify(self):
-        dni = self.home_frame_3_entry_dni.get()
-        nya = self.home_frame_3_entry_nombreyapellido.get()
-        area = self.home_frame_3_entry_area.get()
-        salario = self.home_frame_3_entry_salario.get()
+        question = messagebox.askquestion("Cuidado","Desea modificar el empleado?")
 
-        try:
-            conexion = sqlite3.connect("fravega_data.db")
-            cursor = conexion.cursor()
+        if (question == "yes"):
+            dni = self.home_frame_3_entry_dni.get()
+            nya = self.home_frame_3_entry_nombreyapellido.get()
+            area = self.home_frame_3_entry_area.get()
+            salario = self.home_frame_3_entry_salario.get()
 
-            cursor.execute("UPDATE rh SET nya=?, area=?, sal=? WHERE dni=?", (nya, area, salario, dni))
-            conexion.commit()
-            conexion.close()
+            try:
+                conexion = sqlite3.connect("fravega_data.db")
+                cursor = conexion.cursor()
 
-            self.treeview_empleados_show(self.treeview_empleados)
+                cursor.execute("UPDATE rh SET nya=?, area=?, sal=? WHERE dni=?", (nya, area, salario, dni))
+                conexion.commit()
+                conexion.close()
 
-            self.home_frame_3_entry_dni.delete(0, tk.END)
-            self.home_frame_3_entry_nombreyapellido.delete(0, tk.END)
-            self.home_frame_3_entry_area.delete(0, tk.END)
-            self.home_frame_3_entry_salario.delete(0, tk.END)
+                self.treeview_empleados_show(self.treeview_empleados)
 
-        except sqlite3.Error as error:
-            mensaje_error = "Error al modificar el empleado: " + str(error)
-            messagebox.showerror("Error", mensaje_error)
+                self.home_frame_3_entry_dni.delete(0, tk.END)
+                self.home_frame_3_entry_nombreyapellido.delete(0, tk.END)
+                self.home_frame_3_entry_area.delete(0, tk.END)
+                self.home_frame_3_entry_salario.delete(0, tk.END)
 
-    def treeview_empleados_add(self):
-        dni = self.home_frame_3_entry_dni.get()
-        nya = self.home_frame_3_entry_nombreyapellido.get()
-        area = self.home_frame_3_entry_area.get()
-        salario = self.home_frame_3_entry_salario.get()
+                messagebox.showinfo("Exito","El empleado fue modificado.")
 
-        if not dni or not nya or not area or not salario:
-            messagebox.showwarning("Campos vacíos", "Por favor, complete todos los campos.")
+            except sqlite3.Error as error:
+                mensaje_error = "Error al modificar el empleado: " + str(error)
+                messagebox.showerror("Error", mensaje_error)
+        else:
             return
 
-        try:
-            conexion = sqlite3.connect("fravega_data.db")
-            cursor = conexion.cursor()
+    def treeview_empleados_add(self):
+        question = messagebox.askquestion("Cuidado","¿Desea agregar este nuevo empleado?")
 
-            cursor.execute("INSERT INTO rh (dni, nya, area, sal, asist) VALUES (?, ?, ?, ?, ?)",
-                           (dni, nya, area, salario, "Pendiente"))
-            conexion.commit()
+        if (question == "yes"):
+            dni = self.home_frame_3_entry_dni.get()
+            nya = self.home_frame_3_entry_nombreyapellido.get()
+            area = self.home_frame_3_entry_area.get()
+            salario = self.home_frame_3_entry_salario.get()
 
-            conexion.close()
+            if not dni or not nya or not area or not salario:
+                messagebox.showwarning("Campos vacíos", "Por favor, complete todos los campos.")
+                return
 
-            self.treeview_empleados_show(self.treeview_empleados)
-            self.home_frame_3_entry_dni.delete(0, tk.END)
-            self.home_frame_3_entry_nombreyapellido.delete(0, tk.END)
-            self.home_frame_3_entry_area.delete(0, tk.END)
-            self.home_frame_3_entry_salario.delete(0, tk.END)
+            try:
+                conexion = sqlite3.connect("fravega_data.db")
+                cursor = conexion.cursor()
 
-        except sqlite3.Error as error:
-            mensaje_error = "Error al agregar el empleado: " + str(error)
-            messagebox.showerror("Error", mensaje_error)
+                cursor.execute("INSERT INTO rh (dni, nya, area, sal, asist) VALUES (?, ?, ?, ?, ?)",
+                            (dni, nya, area, salario, "Pendiente"))
+                conexion.commit()
+
+                conexion.close()
+
+                self.treeview_empleados_show(self.treeview_empleados)
+                self.home_frame_3_entry_dni.delete(0, tk.END)
+                self.home_frame_3_entry_nombreyapellido.delete(0, tk.END)
+                self.home_frame_3_entry_area.delete(0, tk.END)
+                self.home_frame_3_entry_salario.delete(0, tk.END)
+
+                messagebox.showinfo("Exito","El empleado fue dado de alta.")
+
+            except sqlite3.Error as error:
+                mensaje_error = "Error al agregar el empleado: " + str(error)
+                messagebox.showerror("Error", mensaje_error)
+        else:
+            return
 
     def validate_dni(self, new_value):
         return new_value.isdigit() and len(new_value) <= 8 or new_value == ""
