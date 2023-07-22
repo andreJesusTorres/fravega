@@ -5,6 +5,7 @@ import webbrowser
 import sqlite3
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
 
 class App(customtkinter.CTk):
     def __init__(self):
@@ -114,8 +115,7 @@ class App(customtkinter.CTk):
             self.home_frame.grid(row=0, column=1, sticky="nsew")
         else:
             self.home_frame.grid_forget()
-        if name == "frame_2":
-            
+        if name == "frame_2":            
             self.frame_2.grid(row=0, column=1,sticky="nsew")
 
             self.home_frame_2_button_1 = customtkinter.CTkButton(self.frame_2, text="Mensajes", image=self.mensajes_image,command=self.email_event)
@@ -176,6 +176,7 @@ class App(customtkinter.CTk):
         else:
             self.frame_2.grid_forget()
         if name == "frame_3":
+
             self.frame_3.grid(row=0, column=1, sticky="nsew")
 
             self.home_frame_3_button_1 = customtkinter.CTkButton(self.frame_3, text="Mensajes", image=self.mensajes_image)
@@ -215,6 +216,9 @@ class App(customtkinter.CTk):
             self.treeview_empleados.heading("Asistencia", text="Asistencia")
             self.treeview_empleados.grid(row=3,column=0,padx=5,pady=0)
 
+            self.treeview_empleados_show(self.treeview_empleados)
+            self.treeview_empleados.bind("<<TreeviewSelect>>", lambda event: self.treeview_empleados_show_entry(event, self.treeview_empleados))
+
             self.treeview_empleados_scrollbar = customtkinter.CTkScrollbar(self.frame_3, height=124, command=self.treeview_empleados.yview)
             self.treeview_empleados_scrollbar.grid(row=3, column=0,padx=(460,0))
 
@@ -227,7 +231,7 @@ class App(customtkinter.CTk):
             self.home_frame_3_label_salario = customtkinter.CTkLabel(self.frame_3, text="Salario", fg_color="transparent")
             self.home_frame_3_label_salario.place(x=312,y=319)
             
-            self.home_frame_3_entry_dni = customtkinter.CTkEntry(self.frame_3, placeholder_text="Solo números")
+            self.home_frame_3_entry_dni = customtkinter.CTkEntry(self.frame_3)
             self.home_frame_3_entry_dni.grid(row=5,column=0,padx=(0,250),pady=40)
             self.home_frame_3_entry_nombreyapellido = customtkinter.CTkEntry(self.frame_3)
             self.home_frame_3_entry_nombreyapellido.grid(row=5,column=0,padx=(250,0),pady=40)
@@ -236,11 +240,17 @@ class App(customtkinter.CTk):
             self.home_frame_3_entry_salario = customtkinter.CTkEntry(self.frame_3)
             self.home_frame_3_entry_salario.grid(row=6,column=0,padx=(250,0),pady=5)
 
-            self.home_frame_3_button_2 = customtkinter.CTkButton(self.frame_3, text="Modificar", width=20)
+            self.home_frame_3_entry_dni.configure(validate="key", validatecommand=(self.register(self.validate_dni), "%P"))
+            self.home_frame_3_entry_nombreyapellido.configure(validate="key", validatecommand=(self.register(self.validate_nombre), "%P"))
+            self.home_frame_3_entry_area.configure(validate="key", validatecommand=(self.register(self.validate_area), "%P"))
+            self.home_frame_3_entry_salario.configure(validate="key", validatecommand=(self.register(self.validate_salario), "%P"))
+
+
+            self.home_frame_3_button_2 = customtkinter.CTkButton(self.frame_3, text="Modificar", width=20, command=self.treeview_empleados_modify)
             self.home_frame_3_button_2.grid(row=7, column=0, padx=(120,0), pady=20)
-            self.home_frame_3_button_3 = customtkinter.CTkButton(self.frame_3, text="Guardar", width=20)
+            self.home_frame_3_button_3 = customtkinter.CTkButton(self.frame_3, text="Guardar", width=20, command=self.treeview_empleados_add)
             self.home_frame_3_button_3.grid(row=7, column=0, padx=(260,0), pady=20)
-            self.home_frame_3_button_4 = customtkinter.CTkButton(self.frame_3, text="Eliminar", width=20)
+            self.home_frame_3_button_4 = customtkinter.CTkButton(self.frame_3, text="Eliminar", width=20, command=self.treeview_empleados_delete)
             self.home_frame_3_button_4.grid(row=7, column=0, padx=(400,0), pady=20)
         else:
             self.frame_3.grid_forget()
@@ -437,6 +447,8 @@ class App(customtkinter.CTk):
 
             self.home_frame.after(3500,after_user_error)
 
+    #Funciones frames
+
     def frame_2_button_event(self):
         self.select_frame_by_name("frame_2")
 
@@ -455,6 +467,133 @@ class App(customtkinter.CTk):
         app_email.title("Email Fravega")
 
         app_email.mainloop()
+        
+    #Funciones de RRHH   
+
+    def treeview_empleados_show(self, treeview_empleados):
+                try:
+                    conn = sqlite3.connect("fravega_data.db")
+                    cursor = conn.cursor()
+                    cursor.execute("SELECT dni, nya, area, sal, asist FROM rh")
+                    fetchall = cursor.fetchall()
+                    conn.close()
+
+                    for fila in treeview_empleados.get_children():
+                        treeview_empleados.delete(fila)
+
+                    for dato in fetchall:
+                        treeview_empleados.insert("", "end", values=dato)
+
+                except sqlite3.Error as error:
+                    mensaje_error = "Error al acceder a la base de datos: " + str(error)
+                    tk.messagebox.showerror("Error", mensaje_error)
+
+    def treeview_empleados_show_entry(self, event, treeview_empleados):
+        seleccion = treeview_empleados.selection()
+        if seleccion:
+            item = treeview_empleados.item(seleccion[0], "values")
+            self.home_frame_3_entry_dni.delete(0, tk.END)
+            self.home_frame_3_entry_dni.insert(0, item[0])
+            self.home_frame_3_entry_nombreyapellido.delete(0, tk.END)
+            self.home_frame_3_entry_nombreyapellido.insert(0, item[1])
+            self.home_frame_3_entry_area.delete(0, tk.END)
+            self.home_frame_3_entry_area.insert(0, item[2])
+            self.home_frame_3_entry_salario.delete(0, tk.END)
+            self.home_frame_3_entry_salario.insert(0, item[3])
+
+    def treeview_empleados_delete(self):
+        dni = self.home_frame_3_entry_dni.get()
+        try:
+            conexion = sqlite3.connect("fravega_data.db")
+            cursor = conexion.cursor()
+
+            cursor.execute("DELETE FROM rh WHERE dni = ?", (dni,))
+            conexion.commit()
+            conexion.close()
+
+            self.treeview_empleados_show(self.treeview_empleados)
+
+            self.home_frame_3_entry_dni.delete(0, tk.END)
+            self.home_frame_3_entry_nombreyapellido.delete(0, tk.END)
+            self.home_frame_3_entry_area.delete(0, tk.END)
+            self.home_frame_3_entry_salario.delete(0, tk.END)
+
+        except sqlite3.Error as error:
+            mensaje_error = "Error al eliminar el empleado: " + str(error)
+            messagebox.showerror("Error", mensaje_error)
+
+    def treeview_empleados_modify(self):
+        dni = self.home_frame_3_entry_dni.get()
+        nya = self.home_frame_3_entry_nombreyapellido.get()
+        area = self.home_frame_3_entry_area.get()
+        salario = self.home_frame_3_entry_salario.get()
+
+        try:
+            conexion = sqlite3.connect("fravega_data.db")
+            cursor = conexion.cursor()
+
+            cursor.execute("UPDATE rh SET nya=?, area=?, sal=? WHERE dni=?", (nya, area, salario, dni))
+            conexion.commit()
+            conexion.close()
+
+            self.treeview_empleados_show(self.treeview_empleados)
+
+            self.home_frame_3_entry_dni.delete(0, tk.END)
+            self.home_frame_3_entry_nombreyapellido.delete(0, tk.END)
+            self.home_frame_3_entry_area.delete(0, tk.END)
+            self.home_frame_3_entry_salario.delete(0, tk.END)
+
+        except sqlite3.Error as error:
+            mensaje_error = "Error al modificar el empleado: " + str(error)
+            messagebox.showerror("Error", mensaje_error)
+
+    def treeview_empleados_add(self):
+        dni = self.home_frame_3_entry_dni.get()
+        nya = self.home_frame_3_entry_nombreyapellido.get()
+        area = self.home_frame_3_entry_area.get()
+        salario = self.home_frame_3_entry_salario.get()
+
+        if not dni or not nya or not area or not salario:
+            messagebox.showwarning("Campos vacíos", "Por favor, complete todos los campos.")
+            return
+
+        try:
+            conexion = sqlite3.connect("fravega_data.db")
+            cursor = conexion.cursor()
+
+            cursor.execute("INSERT INTO rh (dni, nya, area, sal, asist) VALUES (?, ?, ?, ?, ?)",
+                           (dni, nya, area, salario, 0))
+            conexion.commit()
+
+            conexion.close()
+
+            self.treeview_empleados_show(self.treeview_empleados)
+            self.home_frame_3_entry_dni.delete(0, tk.END)
+            self.home_frame_3_entry_nombreyapellido.delete(0, tk.END)
+            self.home_frame_3_entry_area.delete(0, tk.END)
+            self.home_frame_3_entry_salario.delete(0, tk.END)
+
+        except sqlite3.Error as error:
+            mensaje_error = "Error al agregar el empleado: " + str(error)
+            messagebox.showerror("Error", mensaje_error)
+
+    def validate_dni(self, new_value):
+        return new_value.isdigit() and len(new_value) <= 8 or new_value == ""
+     
+    def validate_nombre(self, new_value):
+        return all(c.isalpha() or c.isspace() for c in new_value)
+
+    def validate_salario(self, new_value):
+        try:
+            float(new_value)
+            return True
+        except ValueError:
+            return new_value == "" or (new_value.replace(".", "", 1).isdigit() and (not new_value.startswith("0") or new_value == "0"))
+
+    def validate_area(self, new_value):
+        return all(c.isalpha() or c.isspace() for c in new_value)
+
+    #Funcion apariencia
 
     def change_appearance_mode_event(self, new_appearance_mode):
         customtkinter.set_appearance_mode(new_appearance_mode)
@@ -466,7 +605,7 @@ class App(customtkinter.CTk):
                 self.home_frame_3_label_dni.destroy()
 
         self.home_frame.after(2500,after_theme_changed)
-        
+
 if __name__ == "__main__":
     app = App()
     app.iconbitmap("test_images/fravega.ico")
