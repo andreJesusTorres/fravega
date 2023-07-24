@@ -222,7 +222,7 @@ class App(customtkinter.CTk):
 
             self.treeview_empleados_show(self.treeview_empleados)
             self.treeview_empleados.bind("<<TreeviewSelect>>", lambda event: self.treeview_empleados_show_entry(event, self.treeview_empleados))
-            self.treeview_empleados.bind("<Escape>", lambda event: self.clear_entries_and_selection(event))
+            self.treeview_empleados.bind("<Escape>", lambda event: self.clear_entries_and_selection())
 
             self.treeview_empleados_scrollbar = customtkinter.CTkScrollbar(self.frame_3, height=124, command=self.treeview_empleados.yview)
             self.treeview_empleados_scrollbar.grid(row=3, column=0,padx=(460,0))
@@ -544,17 +544,7 @@ class App(customtkinter.CTk):
                 conexion.commit()
                 conexion.close()
 
-                self.treeview_empleados_show(self.treeview_empleados)
-
-                self.home_frame_3_entry_dni.delete(0, tk.END)
-                self.home_frame_3_entry_nombreyapellido.delete(0, tk.END)
-                self.home_frame_3_entry_area.delete(0, tk.END)
-                self.home_frame_3_entry_salario.delete(0, tk.END)
-                self.home_frame_3_entry_imagen.delete(0, tk.END)
-                self.home_frame_3_entry_documentación.delete(0, tk.END)
-                self.home_frame_3_label_imagen.destroy()
-                se
-                self.home_frame_3_label_imagen.destroy()
+                self.clear_entries_and_selection()
 
                 messagebox.showinfo("Exito","El empleado fue dado de baja.")
 
@@ -575,34 +565,23 @@ class App(customtkinter.CTk):
             doc = self.home_frame_3_entry_documentación.get()
             img = self.home_frame_3_entry_imagen.get()
 
-            try:
-                conexion = sqlite3.connect("fravega_data.db")
-                cursor = conexion.cursor()
+            conexion = sqlite3.connect("fravega_data.db")
+            cursor = conexion.cursor()
 
-                question = messagebox.askquestion("Cuidado","¿Desea modificar la imagen?")
-                if (question == "yes"):
-                    self.load_image()
-                    img = self.home_frame_3_entry_imagen.get()
-
+            question = messagebox.askquestion("Cuidado","¿Desea modificar la imagen?")
+            if (question == "yes"):
+                self.load_image()
+                img = self.home_frame_3_entry_imagen.get()
                 cursor.execute("UPDATE rh SET nya=?, area=?, sal=?,doc=?,img=? WHERE dni=?", (nya, area, salario, doc, img, dni))
-                conexion.commit()
-                conexion.close()
 
-                self.treeview_empleados_show(self.treeview_empleados)
+            elif (question == "no"):
+                cursor.execute("UPDATE rh SET nya=?, area=?, sal=?,doc=? WHERE dni=?", (nya, area, salario, doc, dni))
+            conexion.commit()
+            conexion.close()
 
-                self.home_frame_3_entry_dni.delete(0, tk.END)
-                self.home_frame_3_entry_nombreyapellido.delete(0, tk.END)
-                self.home_frame_3_entry_area.delete(0, tk.END)
-                self.home_frame_3_entry_salario.delete(0, tk.END)
-                self.home_frame_3_entry_documentación.delete(0, tk.END)
-                self.home_frame_3_entry_imagen.delete(0, tk.END)
-                self.home_frame_3_label_imagen.destroy()
+            self.clear_entries_and_selection()
 
-                messagebox.showinfo("Exito","El empleado fue modificado.")
-
-            except sqlite3.Error as error:
-                mensaje_error = "Error al modificar el empleado: " + str(error)
-                messagebox.showerror("Error", mensaje_error)
+            messagebox.showinfo("Exito","El empleado fue modificado.")
         else:
             return
 
@@ -655,13 +634,7 @@ class App(customtkinter.CTk):
 
                 self.treeview_empleados_show(self.treeview_empleados)
 
-                self.home_frame_3_entry_dni.delete(0, tk.END)
-                self.home_frame_3_entry_nombreyapellido.delete(0, tk.END)
-                self.home_frame_3_entry_area.delete(0, tk.END)
-                self.home_frame_3_entry_salario.delete(0, tk.END)
-                self.home_frame_3_entry_imagen.delete(0, tk.END)
-                self.home_frame_3_entry_documentación.delete(0, tk.END)
-                self.home_frame_3_label_imagen.destroy()
+                self.clear_entries_and_selection()
 
                 messagebox.showinfo("Éxito", "El empleado fue dado de alta.")
 
@@ -687,7 +660,7 @@ class App(customtkinter.CTk):
     def validate_area(self, new_value):
         return all(c.isalpha() or c.isspace() for c in new_value)
 
-    def clear_entries_and_selection(self, event):
+    def clear_entries_and_selection(self):
     
         self.home_frame_3_entry_dni.delete(0, tk.END)
         self.home_frame_3_entry_nombreyapellido.delete(0, tk.END)
