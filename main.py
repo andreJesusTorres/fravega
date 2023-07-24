@@ -237,8 +237,6 @@ class App(customtkinter.CTk):
             self.home_frame_3_label_salario.place(x=312,y=312)
             self.home_frame_3_label_documentación = customtkinter.CTkLabel(self.frame_3, text="Documentación", fg_color="transparent")
             self.home_frame_3_label_documentación.place(x=65,y=378)
-            self.home_frame_3_label_imagen = tk.Label(self.frame_3)
-            self.home_frame_3_label_imagen.place(x=215,y=280)
             
             self.home_frame_3_entry_dni = customtkinter.CTkEntry(self.frame_3)
             self.home_frame_3_entry_dni.grid(row=5,column=0,padx=(0,250),pady=31)
@@ -516,17 +514,18 @@ class App(customtkinter.CTk):
             self.home_frame_3_entry_documentación.delete(0, tk.END)
             self.home_frame_3_entry_documentación.insert(0, item[4])
 
-            imagen_ruta = item[5]  
+            try:
+                imagen_ruta = item[5]  
 
-            if imagen_ruta:
+                self.home_frame_3_label_imagen = tk.Label(self.frame_3)
+                self.home_frame_3_label_imagen.place(x=215,y=280)
+
                 img = Image.open(imagen_ruta)
                 img_resized = img.resize((75, 75)) 
                 self.empleado_image = ImageTk.PhotoImage(img_resized) 
                 self.home_frame_3_label_imagen.configure(image=self.empleado_image)
-
-            else:
-                # Si no hay ruta de imagen, mostrar una imagen de placeholder o dejar en blanco
-                self.home_frame_3_label_imagen.config(image=None)
+            except:
+                self.home_frame_3_label_imagen.destroy()
 
     def treeview_empleados_delete(self):
         question = messagebox.askquestion("Cuidado","¿Desea eliminar definitivamente el empleado?")
@@ -548,6 +547,7 @@ class App(customtkinter.CTk):
                 self.home_frame_3_entry_area.delete(0, tk.END)
                 self.home_frame_3_entry_salario.delete(0, tk.END)
                 self.home_frame_3_entry_documentación.delete(0, tk.END)
+                self.home_frame_3_label_imagen.destroy()
 
                 messagebox.showinfo("Exito","El empleado fue dado de baja.")
 
@@ -589,6 +589,7 @@ class App(customtkinter.CTk):
                 self.home_frame_3_entry_salario.delete(0, tk.END)
                 self.home_frame_3_entry_documentación.delete(0, tk.END)
                 self.home_frame_3_entry_imagen.delete(0, tk.END)
+                self.home_frame_3_label_imagen.destroy()
 
                 messagebox.showinfo("Exito","El empleado fue modificado.")
 
@@ -652,6 +653,7 @@ class App(customtkinter.CTk):
                 self.home_frame_3_entry_salario.delete(0, tk.END)
                 self.home_frame_3_entry_documentación.delete(0, tk.END)
                 self.home_frame_3_entry_imagen.delete(0, tk.END)
+                self.home_frame_3_label_imagen.destroy()
 
                 messagebox.showinfo("Éxito", "El empleado fue dado de alta.")
 
@@ -683,6 +685,8 @@ class App(customtkinter.CTk):
         self.home_frame_3_entry_nombreyapellido.delete(0, tk.END)
         self.home_frame_3_entry_area.delete(0, tk.END)
         self.home_frame_3_entry_salario.delete(0, tk.END)
+        self.home_frame_3_entry_imagen.delete(0, tk.END)
+        self.home_frame_3_label_imagen.destroy()
 
         self.treeview_empleados.selection_remove(self.treeview_empleados.focus())
     
