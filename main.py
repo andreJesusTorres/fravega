@@ -545,7 +545,8 @@ class App(customtkinter.CTk):
                 conexion.close()
 
                 self.clear_entries_and_selection()
-
+                self.refresh_treeview()
+            
                 messagebox.showinfo("Exito","El empleado fue dado de baja.")
 
             except sqlite3.Error as error:
@@ -580,6 +581,7 @@ class App(customtkinter.CTk):
             conexion.close()
 
             self.clear_entries_and_selection()
+            self.refresh_treeview()
 
             messagebox.showinfo("Exito","El empleado fue modificado.")
         else:
@@ -632,9 +634,8 @@ class App(customtkinter.CTk):
                 conexion.commit()
                 conexion.close()
 
-                self.treeview_empleados_show(self.treeview_empleados)
-
                 self.clear_entries_and_selection()
+                self.refresh_treeview()
 
                 messagebox.showinfo("Éxito", "El empleado fue dado de alta.")
 
@@ -677,6 +678,23 @@ class App(customtkinter.CTk):
         self.home_frame_3_entry_imagen.delete(0, tk.END)
         self.home_frame_3_entry_imagen.insert(0, ruta_imagen)
     
+    def refresh_treeview(self):
+        for record in self.treeview_empleados.get_children():
+            self.treeview_empleados.delete(record)
+
+        conexion = sqlite3.connect("fravega_data.db")
+        cursor = conexion.cursor()
+        cursor.execute("SELECT dni, nya, area, sal, doc, img FROM rh")
+        empleados = cursor.fetchall()
+        for empleado in empleados:
+            self.treeview_empleados.insert("", "end", values=empleado)
+
+        conexion.close()
+
+        for col in ["#0", "DNI", "Nombre y Apellido", "Area", "Salario", "Documentación"]:
+            self.treeview_empleados.heading(col, anchor=tk.W)
+            self.treeview_empleados.column(col, anchor=tk.CENTER)
+
     #Funcion apariencia
 
     def change_appearance_mode_event(self, new_appearance_mode):
