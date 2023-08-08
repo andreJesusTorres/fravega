@@ -1,16 +1,26 @@
-ADMINISTRACIÓN: Botón mensajes + treeview compras + treeview ventas + scrollbar´s.
+ADMINISTRACIÓN:
+. Treeview compras (conectado a DEPÓSITO) y ventas(conectado a ENTREGAS y CAJA)
 . Cuando se toque compra, que se abran todas las compras que hayan sido cargadas indicando el área.
 . Cuando se toque venta, que se abran todas las ventas que hayan sido cargadas indiciando el área.
 . Mensajes, que se abran los mensajes de otras áreas y que permita responderlos y/o mandar nuevos mensajes.
 
-RR.HH: Treeview empleados + entry´s + botones AEM
+RR.HH:
 .Treeview con todos los empleados, con su área, salario, asistencia.
+. Entry´s con los mismos datos.
 . Agregar, modificar y eliminar personal.
 
-DEPÓSITO: Treeview stock + entry´s + botones AEM
-. Treeview con stock, que tenga, producto, fecha de entrada, fecha de salida.
+DEPÓSITO: 
+. Treeview con stock, que tenga id, producto, cantidad, precio.
+. Entry´s con los mismos datos.
 . Agregar, modificar y eliminar stock.
+. Si el producto cargado tiene mismo nombre, cargarlo como cantidad, no como nuevo.
 
 ENTREGAS
-. Treeview con entregas a hacer, que tenga, producto, cantidad, cliente con dni.
-. Agregar, modificar y entregar producto. 
+. Treeview con entregas pendientes de compras online (id, productos, cantidad, ubicación). 
+. Botón de entregado.
+
+CAJA
+. Treeview con las ventas (id, producto, cantidad, cliente con dni) y que esté conectado a DEPÓSITO.
+. Treeview con el carrito (producto, cantidad y precio total).
+. Carrito de productos, es decir si quiere agregar mas productos.
+. Vender, añadir al carrito y eliminar del carrito.
