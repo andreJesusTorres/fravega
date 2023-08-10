@@ -8,6 +8,7 @@ from tkinter import ttk
 from tkinter import messagebox
 from tkinter import filedialog
 from PIL import Image, ImageTk
+import tkinter.simpledialog as simpledialog
 
 class App(customtkinter.CTk):
     def __init__(self):
@@ -35,7 +36,9 @@ class App(customtkinter.CTk):
         self.deposito_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "deposito.png")), size=(20, 20))
         self.entregas_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "entregas.png")), size=(20, 20))
         self.caja_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "caja.png")), size=(20, 20))
-        self.mensajes_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "mensajes.png")), size=(20, 20))        
+        self.mensajes_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "mensajes.png")), size=(20, 20))  
+        self.editar = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "editar.png")), size=(20, 20))        
+        self.eliminar = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "eliminar.png")), size=(20, 20))              
 
         self.navigation_frame = customtkinter.CTkFrame(self, corner_radius=0)
         self.navigation_frame.grid(row=0, column=0, sticky="nsew")
@@ -113,6 +116,8 @@ class App(customtkinter.CTk):
         self.frame_6 = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
 
         self.select_frame_by_name("home")
+
+        self.carrito = []
 
     def select_frame_by_name(self, name):
         self.home_button.configure(fg_color=("gray75", "gray25") if name == "home" else "transparent")
@@ -403,15 +408,19 @@ class App(customtkinter.CTk):
 
             self.home_frame_6_label_producto = customtkinter.CTkLabel(self.frame_6, text="1. Seleccione el o los productos:", fg_color="transparent")
             self.home_frame_6_label_producto.grid(row=1, column=0, padx=(0,250), pady=0)
-            self.home_frame_6_menu_producto = customtkinter.CTkComboBox(self.frame_6, values=["Dark", "Light", "System"], width=250)
-            self.home_frame_6_menu_producto.grid(row=1, column=0, padx=(190,0), pady=20)
+            
+            self.values_menu_productos()
 
             self.home_frame_6_label_cantidad = customtkinter.CTkLabel(self.frame_6, text="2. Escriba la cantidad:", fg_color="transparent")
             self.home_frame_6_label_cantidad.grid(row=2, column=0, padx=(0,310), pady=0)
             self.home_frame_6_entry_cantidad = customtkinter.CTkEntry(self.frame_6, width=40)
             self.home_frame_6_entry_cantidad.grid(row=2,column=0,padx=(0,140),pady=0)
-            self.home_frame_6_button_2 = customtkinter.CTkButton(self.frame_6, text="Agregar al carrito", width=20)
-            self.home_frame_6_button_2.grid(row=2, column=0, padx=(325,0), pady=0)
+            self.home_frame_6_button_2 = customtkinter.CTkButton(self.frame_6, text="Agregar al carrito", width=20, command=self.agregar_al_carrito)
+            self.home_frame_6_button_2.grid(row=2, column=0, padx=(325, 0), pady=0)
+            self.home_frame_6_button_3 = customtkinter.CTkButton(self.frame_6, text="", image=self.editar, width=20)
+            self.home_frame_6_button_3.grid(row=2, column=0, padx=(160,0), pady=0)
+            self.home_frame_6_button_4 = customtkinter.CTkButton(self.frame_6, text="", image=self.eliminar, width=20, command=self.limpiar_carrito)
+            self.home_frame_6_button_4.grid(row=2, column=0, padx=(70, 0), pady=0)
             
             style = ttk.Style()
             style.theme_use("default")
@@ -431,30 +440,38 @@ class App(customtkinter.CTk):
                 style.map("Treeview.Heading", background=[('active', '#b01685')])   
 
             self.treeview_carrito = ttk.Treeview(self.frame_6, style="Treeview", height=3)           
-            self.treeview_carrito["columns"] = ("Producto", "Cantidad")
-            self.treeview_carrito.column("#0", width=40, minwidth=40, stretch=tk.NO)
-            self.treeview_carrito.column("Producto", width=300, minwidth=300, stretch=tk.NO)
+            self.treeview_carrito["columns"] = ("Id","Producto", "Cantidad", "Precio")
+            self.treeview_carrito.column("#0", width=0, minwidth=0, stretch=tk.NO)
+            self.treeview_carrito.column("Id", width=40, minwidth=40, stretch=tk.NO)
+            self.treeview_carrito.column("Producto", width=250, minwidth=250, stretch=tk.NO)
             self.treeview_carrito.column("Cantidad", width=60, minwidth=60, stretch=tk.NO)
+            self.treeview_carrito.column("Precio", width=70, minwidth=70, stretch=tk.NO)
             self.treeview_carrito.heading("#0", text="Id")
+            self.treeview_carrito.heading("Id", text="Id")
             self.treeview_carrito.heading("Producto", text="Producto")
             self.treeview_carrito.heading("Cantidad", text="Cantidad")
+            self.treeview_carrito.heading("Precio", text="Precio")
             self.treeview_carrito.grid(row=3,column=0,padx=5,pady=20)
 
-            self.treeview_carrito_scrollbar = customtkinter.CTkScrollbar(self.frame_6, height=104, command=self.treeview_carrito.yview)
-            self.treeview_carrito_scrollbar.grid(row=3, column=0,padx=(415,0))
+            self.treeview_carrito.bind("<ButtonRelease-1>", self.seleccionar_producto)
 
-            self.home_frame_6_label_cantidad = customtkinter.CTkLabel(self.frame_6, text="3. DNI Cliente:", fg_color="transparent")
-            self.home_frame_6_label_cantidad.grid(row=4, column=0, padx=(0,350), pady=0)
-            self.home_frame_6_entry_cantidad = customtkinter.CTkEntry(self.frame_6, width=120)
-            self.home_frame_6_entry_cantidad.grid(row=4,column=0,padx=(0,140),pady=0)
+            self.treeview_carrito_scrollbar = customtkinter.CTkScrollbar(self.frame_6, height=104, command=self.treeview_carrito.yview)
+            self.treeview_carrito_scrollbar.grid(row=3, column=0,padx=(420,0))
+
+            self.home_frame_6_label_dni = customtkinter.CTkLabel(self.frame_6, text="3. DNI Cliente:", fg_color="transparent")
+            self.home_frame_6_label_dni.grid(row=4, column=0, padx=(0,350), pady=0)
+            self.home_frame_6_entry_dni = customtkinter.CTkEntry(self.frame_6, width=120)
+            self.home_frame_6_entry_dni.grid(row=4,column=0,padx=(0,140),pady=0)
 
             self.home_frame_6_label_total = customtkinter.CTkLabel(self.frame_6, text="4. Precio total:", fg_color="transparent")
             self.home_frame_6_label_total.grid(row=5, column=0, padx=(0,350), pady=20)
             self.home_frame_6_entry_total = customtkinter.CTkEntry(self.frame_6, width=120)
+            self.home_frame_6_entry_total.insert(0, "0")
             self.home_frame_6_entry_total.grid(row=5,column=0,padx=(0,140),pady=20)
 
-            self.home_frame_6_button_3 = customtkinter.CTkButton(self.frame_6, text="Vender", width=20)
-            self.home_frame_6_button_3.grid(row=6, column=0, padx=(0,400), pady=30)
+            self.home_frame_6_button_5 = customtkinter.CTkButton(self.frame_6, text="Vender", width=20, command=self.realizar_venta)
+            self.home_frame_6_button_5.grid(row=6, column=0, padx=(0, 400), pady=30)
+
         else:
             self.frame_6.grid_forget()
 
@@ -771,7 +788,101 @@ class App(customtkinter.CTk):
             self.treeview_empleados.heading(col, anchor=tk.W)
             self.treeview_empleados.column(col, anchor=tk.CENTER)
 
-    #Funcion apariencia
+    #Frame 6 functions 
+
+    def values_menu_productos(self):
+        self.conn = sqlite3.connect("fravega_data.db")
+        self.cursor = self.conn.cursor()
+
+        query = "SELECT prod FROM dep WHERE cant > 1"
+        self.cursor.execute(query)
+        product_names = [row[0] for row in self.cursor.fetchall()]
+
+        self.home_frame_6_menu_producto = customtkinter.CTkComboBox(self.frame_6, values=product_names, width=250)
+        self.home_frame_6_menu_producto.grid(row=1, column=0, padx=(190, 0), pady=20)
+
+        self.home_frame_6_menu_producto.set("Seleccione producto")
+        self.home_frame_6_menu_producto.configure(state="readonly")
+
+    def agregar_al_carrito(self):
+        producto_seleccionado = self.home_frame_6_menu_producto.get()
+        cantidad = int(self.home_frame_6_entry_cantidad.get())
+
+        # Verificar si el producto ya está en el carrito
+        for item in self.carrito:
+            if item["producto"] == producto_seleccionado:
+                messagebox.showinfo("Producto Existente", "Este producto ya está en el carrito.")
+                return
+
+        # Realizar consulta para obtener información del producto seleccionado
+        query = f"SELECT id, prod, precio FROM dep WHERE prod = '{producto_seleccionado}'"
+        self.cursor.execute(query)
+        producto_info = self.cursor.fetchone()
+
+        if producto_info:
+            producto_id, producto_nombre, producto_precio = producto_info
+
+            # Calcular el precio total del producto
+            precio_total = producto_precio * cantidad
+
+            # Agregar el producto al carrito
+            self.carrito.append({
+                "id": producto_id,
+                "producto": producto_nombre,
+                "cantidad": cantidad,
+                "precio_unitario": producto_precio,
+                "precio_total": precio_total
+            })
+            
+            self.home_frame_6_menu_producto.set("Seleccione producto")
+            self.home_frame_6_entry_cantidad.delete(0, tk.END)
+
+            # Actualizar la vista del Treeview
+            self.actualizar_treeview_carrito()
+
+    def limpiar_carrito(self):
+        respuesta = messagebox.askyesno("Limpiar Carrito", "¿Desea limpiar el carrito?")
+        if respuesta:
+            self.carrito = []
+            self.actualizar_treeview_carrito()  # Limpia el Treeview
+            self.actualizar_precio_total()   # Actualiza el precio total
+
+            # Limpiar los entry
+            self.home_frame_6_menu_producto.set("Seleccione producto")
+            self.home_frame_6_entry_cantidad.delete(0, tk.END)
+
+    def actualizar_treeview_carrito(self):
+        self.treeview_carrito.delete(*self.treeview_carrito.get_children())
+        for item in self.carrito:
+            self.treeview_carrito.insert("", "end", values=(
+                item["id"],
+                item["producto"],
+                item["cantidad"],
+                item["precio_unitario"]
+            ))
+        self.actualizar_precio_total()
+                
+    def actualizar_precio_total(self):
+        self.total_venta = sum(item["precio_total"] for item in self.carrito)
+        self.home_frame_6_entry_total.delete(0, "end")
+        self.home_frame_6_entry_total.insert(0, self.total_venta)
+
+    def realizar_venta(self):
+        total_venta = sum(item["precio_total"] for item in self.carrito)
+        self.home_frame_6_entry_total.delete(0, "end")
+        self.home_frame_6_entry_total.insert(0, total_venta)
+
+    def seleccionar_producto(self, event):
+        selected_item = self.treeview_carrito.selection()
+        if selected_item:
+            item_producto = self.treeview_carrito.item(selected_item, "values")[1]
+            item_cantidad = self.treeview_carrito.item(selected_item, "values")[2]
+
+            self.home_frame_6_menu_producto.set(item_producto)
+            self.home_frame_6_entry_cantidad.delete(0, tk.END)
+            self.home_frame_6_entry_cantidad.insert(0, item_cantidad)
+
+    #Appearance 
 
     def change_appearance_mode_event(self, new_appearance_mode):
         customtkinter.set_appearance_mode(new_appearance_mode)
