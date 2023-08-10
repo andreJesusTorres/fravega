@@ -5,7 +5,7 @@ ADMINISTRACIÓN:
 . Mensajes, que se abran los mensajes de otras áreas y que permita responderlos y/o mandar nuevos mensajes.
 
 RR.HH:
-.Treeview con todos los empleados, con su área, salario, asistencia.
+. Treeview con todos los empleados, con su área, salario, asistencia.
 . Entry´s con los mismos datos.
 . Agregar, modificar y eliminar personal.
 
@@ -20,7 +20,7 @@ ENTREGAS
 . Botón de entregado.
 
 CAJA
-. Treeview con las ventas (id, producto, cantidad, cliente con dni) y que esté conectado a DEPÓSITO.
-. Treeview con el carrito (producto, cantidad y precio total).
+. Treeview con el carrito (producto, cantidad y precio).
 . Carrito de productos, es decir si quiere agregar mas productos.
 . Vender, añadir al carrito y eliminar del carrito.
+. Precio total al apretar vender

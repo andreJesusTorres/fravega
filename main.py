@@ -28,12 +28,14 @@ class App(customtkinter.CTk):
         self.banner_image_empleados = customtkinter.CTkImage(Image.open(os.path.join(self.image_path, "banner_empleados.png")), size=(500, 50))
         self.banner_image_deposito = customtkinter.CTkImage(Image.open(os.path.join(self.image_path, "banner_deposito.png")), size=(500, 50))
         self.banner_image_entregas = customtkinter.CTkImage(Image.open(os.path.join(self.image_path, "banner_entregas.png")), size=(500, 50))
+        self.banner_image_caja = customtkinter.CTkImage(Image.open(os.path.join(self.image_path, "banner_caja.png")), size=(500, 50))
         self.home_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "inicio.png")), size=(20, 20))
         self.admin_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "admin.png")), size=(20, 20))
         self.rrhh_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "rrhh.png")), size=(20, 20))
         self.deposito_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "deposito.png")), size=(20, 20))
         self.entregas_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "entregas.png")), size=(20, 20))
-        self.mensajes_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "mensajes.png")), size=(20, 20))
+        self.caja_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "caja.png")), size=(20, 20))
+        self.mensajes_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "mensajes.png")), size=(20, 20))        
 
         self.navigation_frame = customtkinter.CTkFrame(self, corner_radius=0)
         self.navigation_frame.grid(row=0, column=0, sticky="nsew")
@@ -67,6 +69,11 @@ class App(customtkinter.CTk):
                                                       fg_color="transparent", text_color=("gray10", "gray90"), hover_color=("gray70", "gray30"),
                                                       image=self.entregas_image, anchor="w", state="disabled", command=self.frame_5_button_event)
         self.frame_5_button.grid(row=5, column=0, sticky="ew")
+
+        self.frame_6_button = customtkinter.CTkButton(self.navigation_frame, corner_radius=0, height=40, border_spacing=10, text="Caja",
+                                                      fg_color="transparent", text_color=("gray10", "gray90"), hover_color=("gray70", "gray30"),
+                                                      image=self.caja_image, anchor="w", state="disabled", command=self.frame_6_button_event)
+        self.frame_6_button.grid(row=5, column=0, sticky="ew")
 
         self.appearance_mode_menu = customtkinter.CTkOptionMenu(self.navigation_frame, values=["Dark", "Light", "System"],
                                                                 command=self.change_appearance_mode_event)
@@ -103,6 +110,7 @@ class App(customtkinter.CTk):
         self.frame_3 = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
         self.frame_4 = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
         self.frame_5 = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
+        self.frame_6 = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
 
         self.select_frame_by_name("home")
 
@@ -112,6 +120,7 @@ class App(customtkinter.CTk):
         self.frame_3_button.configure(fg_color=("gray75", "gray25") if name == "frame_3" else "transparent")
         self.frame_4_button.configure(fg_color=("gray75", "gray25") if name == "frame_4" else "transparent")
         self.frame_5_button.configure(fg_color=("gray75", "gray25") if name == "frame_5" else "transparent")
+        self.frame_6_button.configure(fg_color=("gray75", "gray25") if name == "frame_5" else "transparent")
 
         if name == "home":
             self.home_frame.grid(row=0, column=1, sticky="nsew")
@@ -386,6 +395,68 @@ class App(customtkinter.CTk):
             self.home_frame_5_button_3.grid(row=7, column=0, padx=(400,0), pady=58)
         else:
             self.frame_5.grid_forget()
+        if name == "frame_6":
+            self.frame_6.grid(row=0, column=1, sticky="nsew")
+
+            self.home_frame_6_banner_image_empleados_label = customtkinter.CTkLabel(self.frame_6, text="", image=self.banner_image_caja)
+            self.home_frame_6_banner_image_empleados_label.grid(row=0, column=0, padx=5, pady=0)
+
+            self.home_frame_6_label_producto = customtkinter.CTkLabel(self.frame_6, text="1. Seleccione el o los productos:", fg_color="transparent")
+            self.home_frame_6_label_producto.grid(row=1, column=0, padx=(0,250), pady=0)
+            self.home_frame_6_menu_producto = customtkinter.CTkComboBox(self.frame_6, values=["Dark", "Light", "System"], width=250)
+            self.home_frame_6_menu_producto.grid(row=1, column=0, padx=(190,0), pady=20)
+
+            self.home_frame_6_label_cantidad = customtkinter.CTkLabel(self.frame_6, text="2. Escriba la cantidad:", fg_color="transparent")
+            self.home_frame_6_label_cantidad.grid(row=2, column=0, padx=(0,310), pady=0)
+            self.home_frame_6_entry_cantidad = customtkinter.CTkEntry(self.frame_6, width=40)
+            self.home_frame_6_entry_cantidad.grid(row=2,column=0,padx=(0,140),pady=0)
+            self.home_frame_6_button_2 = customtkinter.CTkButton(self.frame_6, text="Agregar al carrito", width=20)
+            self.home_frame_6_button_2.grid(row=2, column=0, padx=(325,0), pady=0)
+            
+            style = ttk.Style()
+            style.theme_use("default")
+
+            if(self.appearance_mode_menu.get() == "Dark"):
+                style.configure("Treeview", background="#343638", foreground="white", rowheight=25, fieldbackground="#343638", bordercolor="#343638", borderwidth=0)
+                style.map('Treeview', background=[('selected', '#b01685')])
+            
+                style.configure("Treeview.Heading", background="#2E2F31", foreground="white", relief="flat")
+                style.map("Treeview.Heading", background=[('active', '#b01685')])
+                                  
+            elif(self.appearance_mode_menu.get() == "Light"):
+                style.configure("Treeview", background="#F9F9FA", foreground="black", rowheight=25, fieldbackground="#F9F9FA", bordercolor="#343638", borderwidth=0)
+                style.map('Treeview', background=[('selected', '#b01685')])
+            
+                style.configure("Treeview.Heading", background="#E3E3E3", foreground="gray1", relief="flat")
+                style.map("Treeview.Heading", background=[('active', '#b01685')])   
+
+            self.treeview_carrito = ttk.Treeview(self.frame_6, style="Treeview", height=3)           
+            self.treeview_carrito["columns"] = ("Producto", "Cantidad")
+            self.treeview_carrito.column("#0", width=40, minwidth=40, stretch=tk.NO)
+            self.treeview_carrito.column("Producto", width=300, minwidth=300, stretch=tk.NO)
+            self.treeview_carrito.column("Cantidad", width=60, minwidth=60, stretch=tk.NO)
+            self.treeview_carrito.heading("#0", text="Id")
+            self.treeview_carrito.heading("Producto", text="Producto")
+            self.treeview_carrito.heading("Cantidad", text="Cantidad")
+            self.treeview_carrito.grid(row=3,column=0,padx=5,pady=20)
+
+            self.treeview_carrito_scrollbar = customtkinter.CTkScrollbar(self.frame_6, height=104, command=self.treeview_carrito.yview)
+            self.treeview_carrito_scrollbar.grid(row=3, column=0,padx=(415,0))
+
+            self.home_frame_6_label_cantidad = customtkinter.CTkLabel(self.frame_6, text="3. DNI Cliente:", fg_color="transparent")
+            self.home_frame_6_label_cantidad.grid(row=4, column=0, padx=(0,350), pady=0)
+            self.home_frame_6_entry_cantidad = customtkinter.CTkEntry(self.frame_6, width=120)
+            self.home_frame_6_entry_cantidad.grid(row=4,column=0,padx=(0,140),pady=0)
+
+            self.home_frame_6_label_total = customtkinter.CTkLabel(self.frame_6, text="4. Precio total:", fg_color="transparent")
+            self.home_frame_6_label_total.grid(row=5, column=0, padx=(0,350), pady=20)
+            self.home_frame_6_entry_total = customtkinter.CTkEntry(self.frame_6, width=120)
+            self.home_frame_6_entry_total.grid(row=5,column=0,padx=(0,140),pady=20)
+
+            self.home_frame_6_button_3 = customtkinter.CTkButton(self.frame_6, text="Vender", width=20)
+            self.home_frame_6_button_3.grid(row=6, column=0, padx=(0,400), pady=30)
+        else:
+            self.frame_6.grid_forget()
 
     def home_button_event(self):
         self.select_frame_by_name("home")
@@ -440,6 +511,7 @@ class App(customtkinter.CTk):
                 self.frame_3_button.configure(state="enabled")
                 self.frame_4_button.configure(state="enabled")
                 self.frame_5_button.configure(state="enabled")
+                self.frame_6_button.configure(state="enabled")
             elif (column0 == "Administración"):
                 self.frame_2_button.configure(state="enabled")
             elif (column0 == "Rrhh"):
@@ -448,6 +520,8 @@ class App(customtkinter.CTk):
                 self.frame_4_button.configure(state="enabled")
             elif (column0 == "Entregas"):
                 self.frame_5_button.configure(state="enabled")
+            elif (column0 == "Caja"):
+                self.frame_6_button.configure(state="enabled")
         else:
             self.home_frame_label_5 = customtkinter.CTkLabel(self.home_frame, text="Usuario no encontrado.", text_color="red")
             self.home_frame_label_5.place(x=195, y=380)
@@ -471,6 +545,9 @@ class App(customtkinter.CTk):
     def frame_5_button_event(self):
         self.select_frame_by_name("frame_5")
 
+    def frame_6_button_event(self):
+        self.select_frame_by_name("frame_6")
+
     def email_event(self):
         app_email = customtkinter.CTk()
         app_email.geometry("650x400")
@@ -478,7 +555,7 @@ class App(customtkinter.CTk):
 
         app_email.mainloop()
         
-    #Funciones de RRHH   
+    #Frame 2 functions 
 
     def treeview_empleados_show(self, treeview_empleados):
         try:
