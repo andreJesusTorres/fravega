@@ -808,37 +808,48 @@ class App(customtkinter.CTk):
         producto_seleccionado = self.home_frame_6_menu_producto.get()
         cantidad = int(self.home_frame_6_entry_cantidad.get())
 
-        # Verificar si el producto ya está en el carrito
-        for item in self.carrito:
-            if item["producto"] == producto_seleccionado:
-                messagebox.showinfo("Producto Existente", "Este producto ya está en el carrito.")
-                return
-
         # Realizar consulta para obtener información del producto seleccionado
-        query = f"SELECT id, prod, precio FROM dep WHERE prod = '{producto_seleccionado}'"
+        query = f"SELECT id, prod, precio, cant FROM dep WHERE prod = '{producto_seleccionado}'"
         self.cursor.execute(query)
         producto_info = self.cursor.fetchone()
 
         if producto_info:
-            producto_id, producto_nombre, producto_precio = producto_info
+            producto_id, producto_nombre, producto_precio, stock_disponible = producto_info
 
-            # Calcular el precio total del producto
-            precio_total = producto_precio * cantidad
+            if cantidad > stock_disponible:
+                messagebox.showerror("Error de Stock", f"La cantidad ingresada es mayor al stock disponible. Stock disponible: {stock_disponible}")
+            elif cantidad <= 0:
+                messagebox.showerror("Error de Cantidad", "La cantidad ingresada debe ser mayor a 0.")
+            else:
+                # Verificar si el producto ya está en el carrito
+                for item in self.carrito:
+                    if item["producto"] == producto_seleccionado:
+                        messagebox.showinfo("Producto Existente", "Este producto ya está en el carrito.")
+                        return
 
-            # Agregar el producto al carrito
-            self.carrito.append({
-                "id": producto_id,
-                "producto": producto_nombre,
-                "cantidad": cantidad,
-                "precio_unitario": producto_precio,
-                "precio_total": precio_total
-            })
-            
-            self.home_frame_6_menu_producto.set("Seleccione producto")
+                # Calcular el precio total del producto
+                precio_total = producto_precio * cantidad
+
+                # Agregar el producto al carrito
+                self.carrito.append({
+                    "id": producto_id,
+                    "producto": producto_nombre,
+                    "cantidad": cantidad,
+                    "precio_unitario": producto_precio,
+                    "precio_total": precio_total
+                })
+                
+                self.home_frame_6_menu_producto.set("Seleccione producto")
+                self.home_frame_6_entry_cantidad.delete(0, tk.END)
+
+                # Actualizar la vista del Treeview
+                self.actualizar_treeview_carrito()
+
+            # Restaurar el valor del Entry de cantidad
             self.home_frame_6_entry_cantidad.delete(0, tk.END)
-
-            # Actualizar la vista del Treeview
-            self.actualizar_treeview_carrito()
+            self.home_frame_6_menu_producto.set("Seleccione producto")
+        else:
+            messagebox.showerror("Error", "El producto seleccionado no se encontró en la base de datos.")
 
     def limpiar_carrito(self):
         respuesta = messagebox.askyesno("Limpiar Carrito", "¿Desea limpiar el carrito?")
