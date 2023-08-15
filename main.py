@@ -1,5 +1,6 @@
 import customtkinter
 import os
+import subprocess
 from PIL import Image
 import webbrowser
 import sqlite3
@@ -9,6 +10,11 @@ from tkinter import messagebox
 from tkinter import filedialog
 from PIL import Image, ImageTk
 import tkinter.simpledialog as simpledialog
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet
+from datetime import datetime
 
 class App(customtkinter.CTk):
     def __init__(self):
@@ -417,7 +423,7 @@ class App(customtkinter.CTk):
             self.home_frame_6_entry_cantidad.grid(row=2,column=0,padx=(0,140),pady=0)
             self.home_frame_6_button_2 = customtkinter.CTkButton(self.frame_6, text="Agregar al carrito", width=20, command=self.agregar_al_carrito)
             self.home_frame_6_button_2.grid(row=2, column=0, padx=(325, 0), pady=0)
-            self.home_frame_6_button_3 = customtkinter.CTkButton(self.frame_6, text="", image=self.editar, width=20)
+            self.home_frame_6_button_3 = customtkinter.CTkButton(self.frame_6, text="", image=self.editar, width=20, command=self.editar_item_seleccionado)
             self.home_frame_6_button_3.grid(row=2, column=0, padx=(160,0), pady=0)
             self.home_frame_6_button_4 = customtkinter.CTkButton(self.frame_6, text="", image=self.eliminar, width=20, command=self.limpiar_carrito)
             self.home_frame_6_button_4.grid(row=2, column=0, padx=(70, 0), pady=0)
@@ -806,6 +812,19 @@ class App(customtkinter.CTk):
 
     def agregar_al_carrito(self):
         producto_seleccionado = self.home_frame_6_menu_producto.get()
+
+        if not producto_seleccionado or producto_seleccionado == "Seleccione producto":
+            messagebox.showinfo("Producto no seleccionado", "Por favor, seleccione un producto antes de agregarlo al carrito.")
+            return
+
+        cantidad = self.home_frame_6_entry_cantidad.get()
+
+        if not cantidad.isdigit() or int(cantidad) <= 0:
+            messagebox.showinfo("Cantidad inválida", "Por favor, ingrese una cantidad válida mayor a 0.")
+            return
+
+        cantidad = int(cantidad)
+        producto_seleccionado = self.home_frame_6_menu_producto.get()
         cantidad = int(self.home_frame_6_entry_cantidad.get())
 
         # Realizar consulta para obtener información del producto seleccionado
@@ -814,6 +833,7 @@ class App(customtkinter.CTk):
         producto_info = self.cursor.fetchone()
 
         if producto_info:
+            
             producto_id, producto_nombre, producto_precio, stock_disponible = producto_info
 
             if cantidad > stock_disponible:
@@ -850,6 +870,52 @@ class App(customtkinter.CTk):
             self.home_frame_6_menu_producto.set("Seleccione producto")
         else:
             messagebox.showerror("Error", "El producto seleccionado no se encontró en la base de datos.")
+
+    def editar_item_seleccionado(self):
+        # Obtener el elemento seleccionado en el Treeview
+        elemento_seleccionado = self.treeview_carrito.focus()
+
+        if not elemento_seleccionado:
+            messagebox.showinfo("Ningún elemento seleccionado", "Por favor, seleccione un elemento en el carrito para editar.")
+            return
+
+        # Obtener los valores de las columnas del elemento seleccionado
+        valores_elemento = self.treeview_carrito.item(elemento_seleccionado, "values")
+        producto_id, producto_nombre, _, _ = valores_elemento
+
+        # Buscar el elemento en el carrito comparando con el nombre del producto
+        for idx, item in enumerate(self.carrito):
+            if item["producto"] == producto_nombre:
+                nueva_cantidad = self.home_frame_6_entry_cantidad.get()
+
+                if not nueva_cantidad.isdigit() or int(nueva_cantidad) <= 0:
+                    messagebox.showinfo("Cantidad inválida", "Por favor, ingrese una cantidad válida mayor a 0.")
+                    return
+
+                nueva_cantidad = int(nueva_cantidad)
+
+                # Realizar consulta para obtener información del producto seleccionado
+                query = f"SELECT id, prod, precio, cant FROM dep WHERE prod = '{producto_nombre}'"
+                self.cursor.execute(query)
+                producto_info = self.cursor.fetchone()
+
+                if producto_info:
+                    _, _, _, stock_disponible = producto_info
+
+                    if nueva_cantidad > stock_disponible:
+                        messagebox.showinfo("Cantidad excede el stock", f"La cantidad ingresada supera el stock disponible ({stock_disponible}).")
+                        return
+
+                # Actualizar la cantidad del elemento
+                self.carrito[idx]["cantidad"] = nueva_cantidad
+
+                # Actualizar el Treeview
+                self.actualizar_treeview_carrito()
+
+                # Limpiar los entry
+                self.home_frame_6_menu_producto.set("Seleccione producto")
+                self.home_frame_6_entry_cantidad.delete(0, tk.END)
+                return
 
     def limpiar_carrito(self):
         respuesta = messagebox.askyesno("Limpiar Carrito", "¿Desea limpiar el carrito?")
@@ -892,6 +958,70 @@ class App(customtkinter.CTk):
             self.home_frame_6_menu_producto.set(item_producto)
             self.home_frame_6_entry_cantidad.delete(0, tk.END)
             self.home_frame_6_entry_cantidad.insert(0, item_cantidad)
+
+    def realizar_venta(self):
+        dni_cliente = self.home_frame_6_entry_dni.get().strip()
+    
+        if not self.carrito:
+            messagebox.showinfo("Carrito vacío", "No hay productos en el carrito para realizar la venta.")
+            return
+        
+        if not dni_cliente:
+            messagebox.showinfo("DNI no ingresado", "Por favor, ingrese el DNI del cliente para realizar la venta.")
+            return
+        
+        # Obtener fecha y hora actual para el nombre del ticket
+        fecha_hora_actual = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        pdf_filename = f"ticket_{fecha_hora_actual}.pdf"
+        pdf_path = os.path.join("tickets", pdf_filename)
+        
+        doc = SimpleDocTemplate(pdf_path, pagesize=letter)
+        story = []
+        
+        # Estilos de texto para el PDF
+        styles = getSampleStyleSheet()
+        style_title = styles['Title']
+        style_normal = styles['Normal']
+        
+        # Agregar título al ticket
+        story.append(Paragraph("Ticket de Venta", style_title))
+        story.append(Spacer(1, 12))
+        
+        # Agregar detalles de la venta al ticket
+        data = [["Producto", "Cantidad", "Precio Unitario", "Total"]]
+        total_venta = 0
+        
+        for item in self.carrito:
+            producto_nombre = item["producto"]
+            cantidad = item["cantidad"]
+            precio_unitario = item["precio_unitario"]
+            precio_total = item["precio_total"]
+            total_venta += precio_total
+            
+            data.append([producto_nombre, cantidad, f"${precio_unitario:.2f}", f"${precio_total:.2f}"])
+        
+        # Agregar la tabla de detalles al PDF
+        table = Table(data, colWidths=[240, 60, 80, 80])
+        table.setStyle(TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                                ('GRID', (0, 0), (-1, -1), 1, colors.black)]))
+        story.append(table)
+        
+        # Agregar total de la venta al ticket
+        story.append(Spacer(1, 12))
+        story.append(Paragraph(f"Total de Venta: ${total_venta:.2f}", style_normal))
+        
+        # Generar el PDF
+        doc.build(story)
+    
+        # Abrir el PDF en Windows
+        subprocess.run(["start", pdf_path], shell=True)
+        
+        messagebox.showinfo("Venta realizada", f"La venta se ha realizado con éxito. El ticket se ha guardado en {pdf_path}.")
 
     #Appearance 
 

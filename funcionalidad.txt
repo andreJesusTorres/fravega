@@ -24,3 +24,8 @@ CAJA
 . Carrito de productos, es decir si quiere agregar mas productos.
 . Vender, añadir al carrito y eliminar del carrito.
 . Precio total al apretar vender
+
+Cosas a hacer:
+Caja: Hacer función para el botón vender y emitir ticket
+Administración: Compra y Venta
+Depósito: Terminar bien el frame entero
