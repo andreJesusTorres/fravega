@@ -14,6 +14,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.pdfgen import canvas
 from datetime import datetime
 
 class App(customtkinter.CTk):
@@ -42,9 +43,10 @@ class App(customtkinter.CTk):
         self.deposito_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "deposito.png")), size=(20, 20))
         self.entregas_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "entregas.png")), size=(20, 20))
         self.caja_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "caja.png")), size=(20, 20))
-        self.mensajes_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "mensajes.png")), size=(20, 20))  
-        self.editar = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "editar.png")), size=(20, 20))        
-        self.eliminar = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "eliminar.png")), size=(20, 20))              
+        self.mensajes_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "mensajes.png")), size=(20, 20))
+        self.editar = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "editar.png")), size=(20, 20))
+        self.eliminar = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "eliminar.png")), size=(20, 20))
+        self.factura = customtkinter.CTkImage(light_image=Image.open(os.path.join(self.image_path, "fravega_factura.png")), size=(20, 20))
 
         self.navigation_frame = customtkinter.CTkFrame(self, corner_radius=0)
         self.navigation_frame.grid(row=0, column=0, sticky="nsew")
@@ -944,11 +946,6 @@ class App(customtkinter.CTk):
         self.home_frame_6_entry_total.delete(0, "end")
         self.home_frame_6_entry_total.insert(0, self.total_venta)
 
-    def realizar_venta(self):
-        total_venta = sum(item["precio_total"] for item in self.carrito)
-        self.home_frame_6_entry_total.delete(0, "end")
-        self.home_frame_6_entry_total.insert(0, total_venta)
-
     def seleccionar_producto(self, event):
         selected_item = self.treeview_carrito.selection()
         if selected_item:
@@ -960,68 +957,67 @@ class App(customtkinter.CTk):
             self.home_frame_6_entry_cantidad.insert(0, item_cantidad)
 
     def realizar_venta(self):
-        dni_cliente = self.home_frame_6_entry_dni.get().strip()
-    
-        if not self.carrito:
-            messagebox.showinfo("Carrito vacío", "No hay productos en el carrito para realizar la venta.")
-            return
-        
-        if not dni_cliente:
-            messagebox.showinfo("DNI no ingresado", "Por favor, ingrese el DNI del cliente para realizar la venta.")
-            return
-        
+        # Obtén la ruta absoluta del archivo actual
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+
+        # Ruta de la imagen de fondo
+        image_path = os.path.join(current_dir, "images", "fravega_factura.png")
+
         # Obtener fecha y hora actual para el nombre del ticket
         fecha_hora_actual = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        pdf_filename = f"ticket_{fecha_hora_actual}.pdf"
-        pdf_path = os.path.join("tickets", pdf_filename)
-        
-        doc = SimpleDocTemplate(pdf_path, pagesize=letter)
+        pdf_filename = os.path.join(current_dir, "tickets", f"ticket_{fecha_hora_actual}.pdf")
+
+        # Calcular subtotal, IVA y total
+        subtotal = sum(item["precio_total"] for item in self.carrito)
+        total_iva = subtotal * 0.21
+        total_con_iva = subtotal + total_iva
+
+        # Crear el documento PDF
+        doc = SimpleDocTemplate(pdf_filename, pagesize=letter)
+
+        # Crear el contenido del ticket
         story = []
-        
-        # Estilos de texto para el PDF
-        styles = getSampleStyleSheet()
-        style_title = styles['Title']
-        style_normal = styles['Normal']
-        
-        # Agregar título al ticket
-        story.append(Paragraph("Ticket de Venta", style_title))
-        story.append(Spacer(1, 12))
-        
-        # Agregar detalles de la venta al ticket
-        data = [["Producto", "Cantidad", "Precio Unitario", "Total"]]
-        total_venta = 0
-        
+
+        # Agregar imagen de fondo a cada página
+        def add_background(canvas, doc):
+            canvas.drawImage(image_path, 0, 0, width=letter[0], height=letter[1])
+
+        doc.build(story, onFirstPage=add_background, onLaterPages=add_background)
+
+        # Agregar espacio para centrar contenido
+        story.append(Spacer(1, (letter[1] - 150) / 2))  # Ajusta el valor para centrar
+
+        # Agregar detalles del carrito al PDF
+        style_normal = getSampleStyleSheet()['Normal']
+
         for item in self.carrito:
             producto_nombre = item["producto"]
             cantidad = item["cantidad"]
             precio_unitario = item["precio_unitario"]
             precio_total = item["precio_total"]
-            total_venta += precio_total
-            
-            data.append([producto_nombre, cantidad, f"${precio_unitario:.2f}", f"${precio_total:.2f}"])
-        
-        # Agregar la tabla de detalles al PDF
-        table = Table(data, colWidths=[240, 60, 80, 80])
-        table.setStyle(TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-                                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-                                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-                                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-                                ('GRID', (0, 0), (-1, -1), 1, colors.black)]))
-        story.append(table)
-        
-        # Agregar total de la venta al ticket
-        story.append(Spacer(1, 12))
-        story.append(Paragraph(f"Total de Venta: ${total_venta:.2f}", style_normal))
-        
+
+            # Presentar los datos sin formato de tabla
+            details = [
+                f"Producto: {producto_nombre}",
+                f"Cantidad: {cantidad}",
+                f"Precio Unitario: ${precio_unitario:.2f}",
+                f"Precio Total: ${precio_total:.2f}"
+            ]
+            story.extend([Paragraph(detail, style_normal) for detail in details])
+            story.append(Spacer(1, 12))
+
+        # Agregar espacio después de los detalles del carrito
+        story.append(Spacer(1, 50))  # Espacio adicional entre detalles y totales
+        story.append(Paragraph(f"Subtotal: ${subtotal:.2f}", style_normal))
+        story.append(Paragraph(f"Total IVA (21%): ${total_iva:.2f}", style_normal))
+        story.append(Paragraph(f"Total con IVA: ${total_con_iva:.2f}", style_normal))
+
         # Generar el PDF
         doc.build(story)
-    
-        # Abrir el PDF en Windows
-        subprocess.run(["start", pdf_path], shell=True)
-        
-        messagebox.showinfo("Venta realizada", f"La venta se ha realizado con éxito. El ticket se ha guardado en {pdf_path}.")
+
+        # Mostrar mensaje de éxito
+        messagebox.showinfo("Venta realizada", f"Se realizó la venta correctamente. El ticket se ha guardado en {pdf_filename}.")
+
 
     #Appearance 
 
