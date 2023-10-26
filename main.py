@@ -133,7 +133,6 @@ class App(customtkinter.CTk):
         self.frame_3_button.configure(fg_color=("gray75", "gray25") if name == "frame_3" else "transparent")
         self.frame_4_button.configure(fg_color=("gray75", "gray25") if name == "frame_4" else "transparent")
         self.frame_5_button.configure(fg_color=("gray75", "gray25") if name == "frame_5" else "transparent")
-        self.frame_6_button.configure(fg_color=("gray75", "gray25") if name == "frame_5" else "transparent")
 
         if name == "home":
             self.home_frame.grid(row=0, column=1, sticky="nsew")
@@ -313,38 +312,48 @@ class App(customtkinter.CTk):
                 style.map("Treeview.Heading", background=[('active', '#b01685')])   
 
             self.treeview_deposito = ttk.Treeview(self.frame_4, style="Treeview", height=4)           
-            self.treeview_deposito["columns"] = ("Producto", "Fecha Entrada", "Fecha Salida")
-            self.treeview_deposito.column("#0", width=40, minwidth=40, stretch=tk.NO)
-            self.treeview_deposito.column("Producto", width=182, minwidth=182, stretch=tk.NO)
-            self.treeview_deposito.column("Fecha Entrada", width=110, minwidth=110, stretch=tk.NO)
-            self.treeview_deposito.column("Fecha Salida", width=110, minwidth=110, stretch=tk.NO)
-            self.treeview_deposito.heading("#0", text="Id")
+            self.treeview_deposito["columns"] = ("Id","Producto", "Cantidad", "Precio")
+            self.treeview_deposito.column("#0", width=0, minwidth=0)
+            self.treeview_deposito.column("Id", width=40, minwidth=40, stretch=tk.NO)
+            self.treeview_deposito.column("Producto", width=292, minwidth=292, stretch=tk.NO)
+            self.treeview_deposito.column("Cantidad", width=50, minwidth=50, stretch=tk.NO)
+            self.treeview_deposito.column("Precio", width=60, minwidth=60, stretch=tk.NO)
+            self.treeview_deposito.heading("#0", text="")
+            self.treeview_deposito.heading("Id", text="Id")
             self.treeview_deposito.heading("Producto", text="Producto")
-            self.treeview_deposito.heading("Fecha Entrada", text="Fecha Entrada")
-            self.treeview_deposito.heading("Fecha Salida", text="Fecha Salida")
+            self.treeview_deposito.heading("Cantidad", text="Cantidad")
+            self.treeview_deposito.heading("Precio", text="Precio")
             self.treeview_deposito.grid(row=3,column=0,padx=5,pady=0)
+
+            self.treeview_deposito_show(self.treeview_deposito)
+            self.treeview_deposito.bind("<<TreeviewSelect>>", lambda event: self.treeview_deposito_show_entry(event, self.treeview_deposito))
+            self.treeview_deposito.bind("<Escape>", lambda event: self.clear_entries_and_selection())
 
             self.treeview_deposito_scrollbar = customtkinter.CTkScrollbar(self.frame_4, height=124, command=self.treeview_deposito.yview)
             self.treeview_deposito_scrollbar.grid(row=3, column=0,padx=(460,0))
 
             self.home_frame_4_label_producto = customtkinter.CTkLabel(self.frame_4, text="Producto", fg_color="transparent")
             self.home_frame_4_label_producto.place(x=50,y=248)
-            self.home_frame_4_label_fecha_entrada = customtkinter.CTkLabel(self.frame_4, text="Fecha Entrada", fg_color="transparent")
-            self.home_frame_4_label_fecha_entrada.place(x=198,y=248)
-            self.home_frame_4_label_fecha_salida = customtkinter.CTkLabel(self.frame_4, text="Fecha Salida", fg_color="transparent")
-            self.home_frame_4_label_fecha_salida.place(x=351,y=248)
-            
+            self.home_frame_4_label_cantidad = customtkinter.CTkLabel(self.frame_4, text="Cantidad", fg_color="transparent")
+            self.home_frame_4_label_cantidad.place(x=198,y=248)
+            self.home_frame_4_label_precio = customtkinter.CTkLabel(self.frame_4, text="Precio", fg_color="transparent")
+            self.home_frame_4_label_precio.place(x=351,y=248)
+
+            self.home_frame_4_entry_id= customtkinter.CTkEntry(self.frame_4, width=120)
+            self.home_frame_4_entry_id.grid(row=5,column=0,padx=(0,300),pady=40)            
             self.home_frame_4_entry_producto= customtkinter.CTkEntry(self.frame_4, width=120)
             self.home_frame_4_entry_producto.grid(row=5,column=0,padx=(0,300),pady=40)
-            self.home_frame_4_entry_fecha_entrada = customtkinter.CTkEntry(self.frame_4, width=120)
-            self.home_frame_4_entry_fecha_entrada.grid(row=5,column=0,padx=(0,0),pady=40)
-            self.home_frame_4_entry_fecha_salida = customtkinter.CTkEntry(self.frame_4, width=120)
-            self.home_frame_4_entry_fecha_salida.grid(row=5,column=0,padx=(300,0),pady=5)
+            self.home_frame_4_entry_cantidad= customtkinter.CTkEntry(self.frame_4, width=120)
+            self.home_frame_4_entry_cantidad.grid(row=5,column=0,padx=(0,0),pady=40)
+            self.home_frame_4_entry_precio = customtkinter.CTkEntry(self.frame_4, width=120)
+            self.home_frame_4_entry_precio.grid(row=5,column=0,padx=(300,0),pady=5)
 
-            self.home_frame_4_button_2 = customtkinter.CTkButton(self.frame_4, text="Guardar", width=20)
-            self.home_frame_4_button_2.grid(row=7, column=0, padx=(260,0), pady=58)
-            self.home_frame_4_button_3 = customtkinter.CTkButton(self.frame_4, text="Eliminar", width=20)
-            self.home_frame_4_button_3.grid(row=7, column=0, padx=(400,0), pady=58)
+            self.home_frame_4_button_2 = customtkinter.CTkButton(self.frame_4, text="Modificar", width=20, command=self.treeview_deposito_modify)
+            self.home_frame_4_button_2.grid(row=7, column=0, padx=(130,0), pady=20)
+            self.home_frame_4_button_3 = customtkinter.CTkButton(self.frame_4, text="Guardar", width=20, command=self.treeview_deposito_add)
+            self.home_frame_4_button_3.grid(row=7, column=0, padx=(270,0), pady=20)
+            self.home_frame_4_button_4 = customtkinter.CTkButton(self.frame_4, text="Eliminar", width=20, command=self.treeview_deposito_delete)
+            self.home_frame_4_button_4.grid(row=7, column=0, padx=(400,0), pady=20)
         else:
             self.frame_4.grid_forget()
         if name == "frame_5":
@@ -479,7 +488,6 @@ class App(customtkinter.CTk):
 
             self.home_frame_6_button_5 = customtkinter.CTkButton(self.frame_6, text="Vender", width=20, command=self.realizar_venta)
             self.home_frame_6_button_5.grid(row=6, column=0, padx=(0, 400), pady=30)
-
         else:
             self.frame_6.grid_forget()
 
@@ -571,15 +579,8 @@ class App(customtkinter.CTk):
         self.select_frame_by_name("frame_5")
 
     def frame_6_button_event(self):
-        self.select_frame_by_name("frame_6")
-
-    def email_event(self):
-        app_email = customtkinter.CTk()
-        app_email.geometry("650x400")
-        app_email.title("Email Fravega")
-
-        app_email.mainloop()
-        
+        self.select_frame_by_name("frame_6")   
+    
     #Frame 2 functions 
 
     def treeview_empleados_show(self, treeview_empleados):
@@ -795,6 +796,149 @@ class App(customtkinter.CTk):
         for col in ["#0", "DNI", "Nombre y Apellido", "Area", "Salario", "Documentación"]:
             self.treeview_empleados.heading(col, anchor=tk.W)
             self.treeview_empleados.column(col, anchor=tk.CENTER)
+
+    #Frame 4
+
+    def treeview_deposito_show(self, treeview_deposito):
+        try:
+            conn = sqlite3.connect("fravega_data.db")
+            cursor = conn.cursor()
+            cursor.execute("SELECT id,prod,cant,precio FROM dep")
+            fetchall = cursor.fetchall()
+            conn.close()
+
+            for fila in treeview_deposito.get_children():
+                treeview_deposito.delete(fila)
+
+            for dato in fetchall:
+                treeview_deposito.insert("", "end", values=dato)
+
+        except sqlite3.Error as error:
+            mensaje_error = "Error al acceder a la base de datos: " + str(error)
+            tk.messagebox.showerror("Error", mensaje_error)
+
+    def treeview_deposito_show_entry(self, event, treeview_deposito):
+        seleccion = treeview_deposito.selection()
+        if seleccion:
+            item = treeview_deposito.item(seleccion[0], "values")
+            self.home_frame_4_entry_id.delete(0, tk.END)
+            self.home_frame_4_entry_id.insert(0, item[0])
+            self.home_frame_4_entry_producto.delete(0, tk.END)
+            self.home_frame_4_entry_producto.insert(0, item[1])
+            self.home_frame_4_entry_cantidad.delete(0, tk.END)
+            self.home_frame_4_entry_cantidad.insert(0, item[2])
+            self.home_frame_4_entry_precio.delete(0, tk.END)
+            self.home_frame_4_entry_precio.insert(0, item[3])
+
+    def treeview_deposito_delete(self):
+        
+        question = messagebox.askquestion("Cuidado","¿Desea eliminar definitivamente el producto?")
+
+        if (question == "yes"):
+            id = self.home_frame_4_entry_id.get()
+            try:
+                conexion = sqlite3.connect("fravega_data.db")
+                cursor = conexion.cursor()
+
+                cursor.execute("DELETE FROM dep WHERE id=?", (id,))
+                conexion.commit()
+                conexion.close()
+
+                self.clear_entries_and_selection()
+                self.refresh_treeview()
+            
+                messagebox.showinfo("Exito","El producto fue dado de baja.")
+
+            except sqlite3.Error as error:
+                mensaje_error = "Error al acceder a la base de datos: " + str(error)
+                tk.messagebox.showerror("Error", mensaje_error)
+        else:
+            return
+        
+    def treeview_deposito_modify(self):
+        
+        question = messagebox.askquestion("Cuidado","Desea modificar el producto?")
+
+        if (question == "yes"):
+            id = self.home_frame_4_entry_id.get()
+            prod = self.home_frame_4_entry_producto.get()
+            cant = self.home_frame_4_entry_cantidad.get()
+            precio = self.home_frame_4_entry_precio.get()
+            conexion = sqlite3.connect("fravega_data.db")
+            cursor = conexion.cursor()
+            cursor.execute("UPDATE dep SET prod=?,cant=?,precio=? WHERE id=?", (prod, cant, precio, id))
+            conexion.commit()
+            conexion.close()
+
+            self.clear_entries_and_selection()
+            self.refresh_treeview()
+
+            messagebox.showinfo("Exito","El producto fue modificado.")
+        else:
+            return
+
+    def treeview_deposito_add(self):
+        
+        question = messagebox.askquestion("Cuidado", "¿Desea agregar este nuevo producto?")
+
+        if question == "yes":
+            id = self.home_frame_4_entry_id.get()
+            prod = self.home_frame_4_entry_producto.get()
+            cant = self.home_frame_4_entry_cantidad.get()
+            precio = self.home_frame_4_entry_precio.get()
+
+            if not prod or not cant or not precio:
+                messagebox.showwarning("Campos vacíos", "Por favor, complete todos los campos.")
+                return
+
+            try:
+                conexion = sqlite3.connect("fravega_data.db")
+                cursor = conexion.cursor()
+
+                cursor.execute("SELECT COUNT(*) FROM dep WHERE id = ?", (id,))
+                existe = cursor.fetchone()[0]
+
+                if existe > 0:
+                    messagebox.showwarning("Producto Existente", "El producto con el ID {} ya existe.".format(id))
+                else:
+                    cursor.execute("INSERT INTO dep (id, prod, cant, precio) VALUES (?, ?, ?, ?)", (id, prod, cant, precio))
+                    conexion.commit()
+                    conexion.close()
+                    self.clear_entries_and_selection()
+                    self.refresh_treeview()
+                    messagebox.showinfo("Éxito", "El producto fue dado de alta.")
+
+            except sqlite3.Error as error:
+                mensaje_error = "Error al acceder a la base de datos: " + str(error)
+                tk.messagebox.showerror("Error", mensaje_error)
+        else:
+            return
+
+    def clear_entries_and_selection(self):
+    
+        self.home_frame_4_entry_id.delete(0, tk.END)
+        self.home_frame_4_entry_producto.delete(0, tk.END)
+        self.home_frame_4_entry_cantidad.delete(0, tk.END)
+        self.home_frame_4_entry_precio.delete(0, tk.END)
+
+        self.treeview_deposito.selection_remove(self.treeview_deposito.focus())
+    
+    def refresh_treeview(self):
+        for record in self.treeview_deposito.get_children():
+            self.treeview_deposito.delete(record)
+
+        conexion = sqlite3.connect("fravega_data.db")
+        cursor = conexion.cursor()
+        cursor.execute("SELECT id,prod,cant,precio FROM dep")
+        productos = cursor.fetchall()
+        for producto in productos:
+            self.treeview_deposito.insert("", "end", values=producto)
+
+        conexion.close()
+
+        for col in ["Id", "Producto", "Cantidad", "Precio"]:
+            self.treeview_deposito.heading(col, anchor=tk.W)
+            self.treeview_deposito.column(col, anchor=tk.W)
 
     #Frame 6 functions 
 
