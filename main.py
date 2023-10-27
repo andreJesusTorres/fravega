@@ -243,7 +243,7 @@ class App(customtkinter.CTk):
 
             self.treeview_empleados_show(self.treeview_empleados)
             self.treeview_empleados.bind("<<TreeviewSelect>>", lambda event: self.treeview_empleados_show_entry(event, self.treeview_empleados))
-            self.treeview_empleados.bind("<Escape>", lambda event: self.clear_entries_and_selection())
+            self.treeview_empleados.bind("<Escape>", lambda event: self.clear_entries_and_selection_empleados())
 
             self.treeview_empleados_scrollbar = customtkinter.CTkScrollbar(self.frame_3, height=124, command=self.treeview_empleados.yview)
             self.treeview_empleados_scrollbar.grid(row=3, column=0,padx=(460,0))
@@ -263,11 +263,11 @@ class App(customtkinter.CTk):
             self.home_frame_3_entry_dni.grid(row=5,column=0,padx=(0,250),pady=31)
             self.home_frame_3_entry_nombreyapellido = customtkinter.CTkEntry(self.frame_3)
             self.home_frame_3_entry_nombreyapellido.grid(row=5,column=0,padx=(250,0),pady=31)
-            self.home_frame_3_entry_area = customtkinter.CTkEntry(self.frame_3)
+            self.home_frame_3_entry_area = customtkinter.CTkComboBox(self.frame_3, values=["Administración","RR.HH","Depósito","Caja"], width=135)
             self.home_frame_3_entry_area.grid(row=6,column=0,padx=(0,250),pady=5)
             self.home_frame_3_entry_salario = customtkinter.CTkEntry(self.frame_3)
             self.home_frame_3_entry_salario.grid(row=6,column=0,padx=(250,0),pady=5)
-            self.home_frame_3_entry_documentación = customtkinter.CTkEntry(self.frame_3)
+            self.home_frame_3_entry_documentación = customtkinter.CTkComboBox(self.frame_3, values=["En regla","Faltante"], width=135)
             self.home_frame_3_entry_documentación.grid(row=7,column=0,padx=(0,250),pady=37)
             self.home_frame_3_entry_imagen = customtkinter.CTkEntry(self.frame_3)
             self.home_frame_3_entry_imagen.grid(row=23,column=0,padx=(0,0),pady=37)
@@ -327,7 +327,7 @@ class App(customtkinter.CTk):
 
             self.treeview_deposito_show(self.treeview_deposito)
             self.treeview_deposito.bind("<<TreeviewSelect>>", lambda event: self.treeview_deposito_show_entry(event, self.treeview_deposito))
-            self.treeview_deposito.bind("<Escape>", lambda event: self.clear_entries_and_selection())
+            self.treeview_deposito.bind("<Escape>", lambda event: self.clear_entries_and_selection_deposito())
 
             self.treeview_deposito_scrollbar = customtkinter.CTkScrollbar(self.frame_4, height=124, command=self.treeview_deposito.yview)
             self.treeview_deposito_scrollbar.grid(row=3, column=0,padx=(460,0))
@@ -581,7 +581,7 @@ class App(customtkinter.CTk):
     def frame_6_button_event(self):
         self.select_frame_by_name("frame_6")   
     
-    #Frame 2 functions 
+    #Frame 3 functions 
 
     def treeview_empleados_show(self, treeview_empleados):
         try:
@@ -634,118 +634,155 @@ class App(customtkinter.CTk):
                     self.home_frame_3_label_imagen.destroy()
 
     def treeview_empleados_delete(self):
-        question = messagebox.askquestion("Cuidado","¿Desea eliminar definitivamente el empleado?")
 
-        if (question == "yes"):
-            dni = self.home_frame_3_entry_dni.get()
-            try:
-                conexion = sqlite3.connect("fravega_data.db")
-                cursor = conexion.cursor()
-
-                cursor.execute("DELETE FROM rh WHERE dni = ?", (dni,))
-                conexion.commit()
-                conexion.close()
-
-                self.clear_entries_and_selection()
-                self.refresh_treeview()
-            
-                messagebox.showinfo("Exito","El empleado fue dado de baja.")
-
-            except sqlite3.Error as error:
-                mensaje_error = "Error al eliminar el empleado: " + str(error)
-                messagebox.showerror("Error", mensaje_error)
+        dni = self.home_frame_3_entry_dni.get()
+        nya = self.home_frame_3_entry_nombreyapellido.get()
+        area = self.home_frame_3_entry_area.get()
+        salario = self.home_frame_3_entry_salario.get()
+        doc = self.home_frame_3_entry_documentación.get()
+        img = self.home_frame_3_entry_imagen.get()
+    
+        if not dni or not nya or not area or not salario or not doc:
+            messagebox.showwarning("Cuidado", "Seleccione un empleado para eliminar.")
         else:
-            return
+            question = messagebox.askquestion("Cuidado","¿Desea eliminar definitivamente el empleado?")
+
+            if (question == "yes"):
+                dni = self.home_frame_3_entry_dni.get()
+                try:
+                    conexion = sqlite3.connect("fravega_data.db")
+                    cursor = conexion.cursor()
+
+                    cursor.execute("DELETE FROM rh WHERE dni = ?", (dni,))
+                    conexion.commit()
+                    conexion.close()
+
+                    self.clear_entries_and_selection_empleados()
+                    self.refresh_treeview_empleados()
+                
+                    messagebox.showinfo("Exito","El empleado fue dado de baja.")
+
+                except sqlite3.Error as error:
+                    mensaje_error = "Error al eliminar el empleado: " + str(error)
+                    messagebox.showerror("Error", mensaje_error)
+            else:
+                return
         
     def treeview_empleados_modify(self):
-        question = messagebox.askquestion("Cuidado","Desea modificar el empleado?")
 
-        if (question == "yes"):
-            dni = self.home_frame_3_entry_dni.get()
-            nya = self.home_frame_3_entry_nombreyapellido.get()
-            area = self.home_frame_3_entry_area.get()
-            salario = self.home_frame_3_entry_salario.get()
-            doc = self.home_frame_3_entry_documentación.get()
-            img = self.home_frame_3_entry_imagen.get()
+        dni = self.home_frame_3_entry_dni.get()
+        nya = self.home_frame_3_entry_nombreyapellido.get()
+        area = self.home_frame_3_entry_area.get()
+        salario = self.home_frame_3_entry_salario.get()
+        doc = self.home_frame_3_entry_documentación.get()
+        img = self.home_frame_3_entry_imagen.get()
 
-            conexion = sqlite3.connect("fravega_data.db")
-            cursor = conexion.cursor()
-
-            question = messagebox.askquestion("Cuidado","¿Desea modificar la imagen?")
-            if (question == "yes"):
-                self.load_image()
-                img = self.home_frame_3_entry_imagen.get()
-                cursor.execute("UPDATE rh SET nya=?, area=?, sal=?,doc=?,img=? WHERE dni=?", (nya, area, salario, doc, img, dni))
-
-            elif (question == "no"):
-                cursor.execute("UPDATE rh SET nya=?, area=?, sal=?,doc=? WHERE dni=?", (nya, area, salario, doc, dni))
-            conexion.commit()
-            conexion.close()
-
-            self.clear_entries_and_selection()
-            self.refresh_treeview()
-
-            messagebox.showinfo("Exito","El empleado fue modificado.")
+        if not dni or not nya or not area or not salario or not doc:
+            messagebox.showwarning("Cuidado", "Seleccione un empleado para modificar.")
         else:
-            return
+            question = messagebox.askquestion("Cuidado","Desea modificar el empleado?")
 
-    def treeview_empleados_add(self):
-        def dni_verification(dni):
-            try:
+            if (question == "yes"):
+                
                 conexion = sqlite3.connect("fravega_data.db")
                 cursor = conexion.cursor()
 
-                cursor.execute("SELECT dni FROM rh WHERE dni = ?", (dni,))
-                resultado = cursor.fetchone()
+                question = messagebox.askquestion("Cuidado","¿Desea modificar la imagen?")
+                if (question == "yes"):
+                    self.load_image()
+                    img = self.home_frame_3_entry_imagen.get()
+                    cursor.execute("UPDATE rh SET nya=?, area=?, sal=?,doc=?,img=? WHERE dni=?", (nya, area, salario, doc, img, dni))
 
-                conexion.close()
-
-                if resultado:
-                    return True
-                else:
-                    return False
-
-            except sqlite3.Error as error:
-                mensaje_error = "Error al verificar el DNI: " + str(error)
-                messagebox.showerror("Error", mensaje_error)
-                return True
-
-        question = messagebox.askquestion("Cuidado", "¿Desea agregar este nuevo empleado?")
-
-        if question == "yes":
-            dni = self.home_frame_3_entry_dni.get()
-            nya = self.home_frame_3_entry_nombreyapellido.get()
-            area = self.home_frame_3_entry_area.get()
-            salario = self.home_frame_3_entry_salario.get()
-            doc = self.home_frame_3_entry_documentación.get()
-
-            if not dni or not nya or not area or not salario or not doc:
-                messagebox.showwarning("Campos vacíos", "Por favor, complete todos los campos.")
-                return
-
-            if dni_verification(dni):
-                messagebox.showwarning("Cuidado", "El DNI ya está registrado. No se puede agregar nuevamente.")
-                return
-
-            try:
-                conexion = sqlite3.connect("fravega_data.db")
-                cursor = conexion.cursor()
-
-                cursor.execute("INSERT INTO rh (dni, nya, area, sal, doc) VALUES (?, ?, ?, ?, ?)",
-                            (dni, nya, area, salario, doc, img))
+                elif (question == "no"):
+                    cursor.execute("UPDATE rh SET nya=?, area=?, sal=?,doc=? WHERE dni=?", (nya, area, salario, doc, dni))
                 conexion.commit()
                 conexion.close()
 
-                self.clear_entries_and_selection()
-                self.refresh_treeview()
+                self.clear_entries_and_selection_empleados()
+                self.refresh_treeview_empleados()
 
-                messagebox.showinfo("Éxito", "El empleado fue dado de alta.")
+                messagebox.showinfo("Exito","El empleado fue modificado.")
+            else:
+                return
 
-            except sqlite3.Error as error:
-                mensaje_error = "Error al agregar el empleado: " + str(error)
-                messagebox.showerror("Error", mensaje_error)
-        else:
-            return
+    def treeview_empleados_add(self):
+
+        dni = self.home_frame_3_entry_dni.get()
+        nya = self.home_frame_3_entry_nombreyapellido.get()
+        area = self.home_frame_3_entry_area.get()
+        salario = self.home_frame_3_entry_salario.get()
+        doc = self.home_frame_3_entry_documentación.get()
+        img = self.home_frame_3_entry_imagen.get()
+    
+        if not dni or not nya or not area or not salario or not doc:
+            messagebox.showwarning("Cuidado", "Complete todos los campos.")
+        else:       
+
+            def dni_verification(dni):
+                try:
+                    conexion = sqlite3.connect("fravega_data.db")
+                    cursor = conexion.cursor()
+
+                    cursor.execute("SELECT dni FROM rh WHERE dni = ?", (dni,))
+                    resultado = cursor.fetchone()
+
+                    conexion.close()
+
+                    if resultado:
+                        return True
+                    else:
+                        return False
+
+                except sqlite3.Error as error:
+                    mensaje_error = "Error al verificar el DNI: " + str(error)
+                    messagebox.showerror("Error", mensaje_error)
+                    return True
+
+            question = messagebox.askquestion("Cuidado", "¿Desea agregar este nuevo empleado?")
+
+            if question == "yes":
+                dni = self.home_frame_3_entry_dni.get()
+                nya = self.home_frame_3_entry_nombreyapellido.get()
+                area = self.home_frame_3_entry_area.get()
+                salario = self.home_frame_3_entry_salario.get()
+                doc = self.home_frame_3_entry_documentación.get()            
+                img = self.home_frame_3_entry_imagen.get()
+
+                if not dni or not nya or not area or not salario or not doc:
+                    messagebox.showwarning("Campos vacíos", "Por favor, complete todos los campos.")
+                    return
+
+                if dni_verification(dni):
+                    messagebox.showwarning("Cuidado", "El DNI ya está registrado. No se puede agregar nuevamente.")
+                    return
+                
+                question = messagebox.askquestion("Cuidado","¿Desea agregar una imagen?")
+
+                if (question == "yes"):
+
+                    try:
+                        self.load_image()
+                        img = self.home_frame_3_entry_imagen.get()
+
+                        conexion = sqlite3.connect("fravega_data.db")
+                        cursor = conexion.cursor()
+                        cursor.execute("INSERT INTO rh (dni, nya, area, sal, doc, img) VALUES (?, ?, ?, ?, ?, ?)",(dni, nya, area, salario, doc,img))
+                        conexion.commit()
+                        conexion.close()
+
+                        self.clear_entries_and_selection_empleados()
+                        self.refresh_treeview_empleados()
+
+                        messagebox.showinfo("Éxito", "El empleado fue dado de alta.")
+
+                    except sqlite3.Error as error:
+                        mensaje_error = "Error al agregar el empleado: " + str(error)
+                        messagebox.showerror("Error", mensaje_error)
+
+                elif (question == "no"):
+                    messagebox.showwarning("Cuidado","Si o sí deberá cargar una imagen del empleado.")                  
+                else:
+                    return
 
     def validate_dni(self, new_value):
         return new_value.isdigit() and len(new_value) <= 8 or new_value == ""
@@ -763,24 +800,23 @@ class App(customtkinter.CTk):
     def validate_area(self, new_value):
         return all(c.isalpha() or c.isspace() for c in new_value)
 
-    def clear_entries_and_selection(self):
-    
+    def clear_entries_and_selection_empleados(self):
+
         self.home_frame_3_entry_dni.delete(0, tk.END)
         self.home_frame_3_entry_nombreyapellido.delete(0, tk.END)
         self.home_frame_3_entry_area.delete(0, tk.END)
         self.home_frame_3_entry_salario.delete(0, tk.END)
         self.home_frame_3_entry_imagen.delete(0, tk.END)
         self.home_frame_3_entry_documentación.delete(0, tk.END)
+        self.home_frame_3_entry_imagen.delete(0, tk.END)
         self.home_frame_3_label_imagen.destroy()
-
-        self.treeview_empleados.selection_remove(self.treeview_empleados.focus())
-    
+               
     def load_image(self):
         ruta_imagen = filedialog.askopenfilename(title="Seleccionar imagen", filetypes=[("Imagen", "*.png;*.jpg;*.jpeg")])
         self.home_frame_3_entry_imagen.delete(0, tk.END)
         self.home_frame_3_entry_imagen.insert(0, ruta_imagen)
     
-    def refresh_treeview(self):
+    def refresh_treeview_empleados(self):
         for record in self.treeview_empleados.get_children():
             self.treeview_empleados.delete(record)
 
@@ -844,8 +880,8 @@ class App(customtkinter.CTk):
                 conexion.commit()
                 conexion.close()
 
-                self.clear_entries_and_selection()
-                self.refresh_treeview()
+                self.clear_entries_and_selection_deposito()
+                self.refresh_treeview_deposito()
             
                 messagebox.showinfo("Exito","El producto fue dado de baja.")
 
@@ -870,8 +906,8 @@ class App(customtkinter.CTk):
             conexion.commit()
             conexion.close()
 
-            self.clear_entries_and_selection()
-            self.refresh_treeview()
+            self.clear_entries_and_selection_deposito()
+            self.refresh_treeview_deposito()
 
             messagebox.showinfo("Exito","El producto fue modificado.")
         else:
@@ -904,8 +940,10 @@ class App(customtkinter.CTk):
                     cursor.execute("INSERT INTO dep (id, prod, cant, precio) VALUES (?, ?, ?, ?)", (id, prod, cant, precio))
                     conexion.commit()
                     conexion.close()
-                    self.clear_entries_and_selection()
-                    self.refresh_treeview()
+                    
+                    self.clear_entries_and_selection_deposito()
+                    self.refresh_treeview_deposito()
+
                     messagebox.showinfo("Éxito", "El producto fue dado de alta.")
 
             except sqlite3.Error as error:
@@ -914,7 +952,7 @@ class App(customtkinter.CTk):
         else:
             return
 
-    def clear_entries_and_selection(self):
+    def clear_entries_and_selection_deposito(self):
     
         self.home_frame_4_entry_id.delete(0, tk.END)
         self.home_frame_4_entry_producto.delete(0, tk.END)
@@ -923,7 +961,7 @@ class App(customtkinter.CTk):
 
         self.treeview_deposito.selection_remove(self.treeview_deposito.focus())
     
-    def refresh_treeview(self):
+    def refresh_treeview_deposito(self):
         for record in self.treeview_deposito.get_children():
             self.treeview_deposito.delete(record)
 
@@ -1161,7 +1199,6 @@ class App(customtkinter.CTk):
 
         # Mostrar mensaje de éxito
         messagebox.showinfo("Venta realizada", f"Se realizó la venta correctamente. El ticket se ha guardado en {pdf_filename}.")
-
 
     #Appearance 
 
