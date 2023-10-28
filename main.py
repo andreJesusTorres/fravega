@@ -263,11 +263,11 @@ class App(customtkinter.CTk):
             self.home_frame_3_entry_dni.grid(row=5,column=0,padx=(0,250),pady=31)
             self.home_frame_3_entry_nombreyapellido = customtkinter.CTkEntry(self.frame_3)
             self.home_frame_3_entry_nombreyapellido.grid(row=5,column=0,padx=(250,0),pady=31)
-            self.home_frame_3_entry_area = customtkinter.CTkComboBox(self.frame_3, values=["Administración","RR.HH","Depósito","Caja"], width=135)
+            self.home_frame_3_entry_area = customtkinter.CTkEntry(self.frame_3)
             self.home_frame_3_entry_area.grid(row=6,column=0,padx=(0,250),pady=5)
             self.home_frame_3_entry_salario = customtkinter.CTkEntry(self.frame_3)
             self.home_frame_3_entry_salario.grid(row=6,column=0,padx=(250,0),pady=5)
-            self.home_frame_3_entry_documentación = customtkinter.CTkComboBox(self.frame_3, values=["En regla","Faltante"], width=135)
+            self.home_frame_3_entry_documentación = customtkinter.CTkEntry(self.frame_3)
             self.home_frame_3_entry_documentación.grid(row=7,column=0,padx=(0,250),pady=37)
             self.home_frame_3_entry_imagen = customtkinter.CTkEntry(self.frame_3)
             self.home_frame_3_entry_imagen.grid(row=23,column=0,padx=(0,0),pady=37)
@@ -480,13 +480,14 @@ class App(customtkinter.CTk):
             self.home_frame_6_entry_dni = customtkinter.CTkEntry(self.frame_6, width=120)
             self.home_frame_6_entry_dni.grid(row=4,column=0,padx=(0,140),pady=0)
 
+            self.home_frame_6_entry_dni.configure(validate="key", validatecommand=(self.register(self.validate_dni), "%P"))
+
             self.home_frame_6_label_total = customtkinter.CTkLabel(self.frame_6, text="4. Precio total:", fg_color="transparent")
             self.home_frame_6_label_total.grid(row=5, column=0, padx=(0,350), pady=20)
             self.home_frame_6_entry_total = customtkinter.CTkEntry(self.frame_6, width=120)
-            self.home_frame_6_entry_total.insert(0, "0")
             self.home_frame_6_entry_total.grid(row=5,column=0,padx=(0,140),pady=20)
 
-            self.home_frame_6_button_5 = customtkinter.CTkButton(self.frame_6, text="Vender", width=20, command=self.realizar_venta)
+            self.home_frame_6_button_5 = customtkinter.CTkButton(self.frame_6, text="Vender", width=20, command=lambda:self.realizar_venta(self.carrito))
             self.home_frame_6_button_5.grid(row=6, column=0, padx=(0, 400), pady=30)
         else:
             self.frame_6.grid_forget()
@@ -1105,12 +1106,13 @@ class App(customtkinter.CTk):
         respuesta = messagebox.askyesno("Limpiar Carrito", "¿Desea limpiar el carrito?")
         if respuesta:
             self.carrito = []
-            self.actualizar_treeview_carrito()  # Limpia el Treeview
-            self.actualizar_precio_total()   # Actualiza el precio total
+            self.actualizar_treeview_carrito()  
+            self.actualizar_precio_total()   
 
-            # Limpiar los entry
             self.home_frame_6_menu_producto.set("Seleccione producto")
             self.home_frame_6_entry_cantidad.delete(0, tk.END)
+            self.home_frame_6_entry_total.configure(state="normal")
+            self.home_frame_6_entry_total.delete(0, "end")
 
     def actualizar_treeview_carrito(self):
         self.treeview_carrito.delete(*self.treeview_carrito.get_children())
@@ -1127,6 +1129,7 @@ class App(customtkinter.CTk):
         self.total_venta = sum(item["precio_total"] for item in self.carrito)
         self.home_frame_6_entry_total.delete(0, "end")
         self.home_frame_6_entry_total.insert(0, self.total_venta)
+        self.home_frame_6_entry_total.configure(state="readonly")
 
     def seleccionar_producto(self, event):
         selected_item = self.treeview_carrito.selection()
@@ -1138,67 +1141,69 @@ class App(customtkinter.CTk):
             self.home_frame_6_entry_cantidad.delete(0, tk.END)
             self.home_frame_6_entry_cantidad.insert(0, item_cantidad)
 
-    def realizar_venta(self):
-        # Obtén la ruta absoluta del archivo actual
-        current_dir = os.path.dirname(os.path.abspath(__file__))
+    def realizar_venta(self, carrito):
 
-        # Ruta de la imagen de fondo
-        image_path = os.path.join(current_dir, "images", "fravega_factura.png")
+        dni_frame_6 = self.home_frame_6_entry_dni.get()
 
-        # Obtener fecha y hora actual para el nombre del ticket
-        fecha_hora_actual = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        pdf_filename = os.path.join(current_dir, "tickets", f"ticket_{fecha_hora_actual}.pdf")
+        if not dni_frame_6:
+            messagebox.showwarning("Cuidado","Coloque el DNI.")
+        elif not carrito:
+            messagebox.showwarning("Cuidado","Seleccione un producto para vender.")
+        else:
 
-        # Calcular subtotal, IVA y total
-        subtotal = sum(item["precio_total"] for item in self.carrito)
-        total_iva = subtotal * 0.21
-        total_con_iva = subtotal + total_iva
+            current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        # Crear el documento PDF
-        doc = SimpleDocTemplate(pdf_filename, pagesize=letter)
+            image_path = os.path.join(current_dir, "images", "fravega_factura.png")
 
-        # Crear el contenido del ticket
-        story = []
+            fecha_hora_actual = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            pdf_filename = os.path.join(current_dir, "tickets", f"ticket_{fecha_hora_actual}.pdf")
 
-        # Agregar imagen de fondo a cada página
-        def add_background(canvas, doc):
-            canvas.drawImage(image_path, 0, 0, width=letter[0], height=letter[1])
+            subtotal = sum(item["precio_total"] for item in self.carrito)
+            total_iva = subtotal * 0.21
+            total_con_iva = subtotal + total_iva
 
-        doc.build(story, onFirstPage=add_background, onLaterPages=add_background)
+            doc = SimpleDocTemplate(pdf_filename, pagesize=letter)
 
-        # Agregar espacio para centrar contenido
-        story.append(Spacer(1, (letter[1] - 150) / 2))  # Ajusta el valor para centrar
+            story = []
 
-        # Agregar detalles del carrito al PDF
-        style_normal = getSampleStyleSheet()['Normal']
+            def add_background(canvas, doc):
+                canvas.drawImage(image_path, 0, 0, width=letter[0], height=letter[1])
 
-        for item in self.carrito:
-            producto_nombre = item["producto"]
-            cantidad = item["cantidad"]
-            precio_unitario = item["precio_unitario"]
-            precio_total = item["precio_total"]
+            doc.build(story, onFirstPage=add_background, onLaterPages=add_background)
 
-            # Presentar los datos sin formato de tabla
-            details = [
-                f"Producto: {producto_nombre}",
-                f"Cantidad: {cantidad}",
-                f"Precio Unitario: ${precio_unitario:.2f}",
-                f"Precio Total: ${precio_total:.2f}"
-            ]
-            story.extend([Paragraph(detail, style_normal) for detail in details])
-            story.append(Spacer(1, 12))
+            story.append(Spacer(1, (letter[1] - 150) / 2)) 
 
-        # Agregar espacio después de los detalles del carrito
-        story.append(Spacer(1, 50))  # Espacio adicional entre detalles y totales
-        story.append(Paragraph(f"Subtotal: ${subtotal:.2f}", style_normal))
-        story.append(Paragraph(f"Total IVA (21%): ${total_iva:.2f}", style_normal))
-        story.append(Paragraph(f"Total con IVA: ${total_con_iva:.2f}", style_normal))
+            style_normal = getSampleStyleSheet()['Normal']
 
-        # Generar el PDF
-        doc.build(story)
+            # Crear una lista de datos del carrito para la tabla
+            carrito_data = []
+            for item in self.carrito:
+                producto_nombre = item["producto"]
+                cantidad = item["cantidad"]
+                precio_unitario = f"${item['precio_unitario']:.2f}"
+                precio_total = f"${item['precio_total']:.2f}"
 
-        # Mostrar mensaje de éxito
-        messagebox.showinfo("Venta realizada", f"Se realizó la venta correctamente. El ticket se ha guardado en {pdf_filename}.")
+                carrito_data.append([producto_nombre, cantidad, precio_unitario, precio_total])
+
+            # Crear la tabla con ancho fijo para cada columna
+            table = Table(carrito_data, colWidths=[310, 40, 20, 80])
+
+            # Establecer el estilo de la tabla para que los datos estén alineados a la izquierda
+            table.setStyle(TableStyle([
+                ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ]))
+
+            # Agregar la tabla al story
+            story.append(table)
+
+            story.append(Spacer(1, 50))
+            story.append(Paragraph(f"${subtotal:.2f}", style_normal))
+            story.append(Paragraph(f"${total_iva:.2f}", style_normal))
+            story.append(Paragraph(f"${total_con_iva:.2f}", style_normal))
+
+            doc.build(story)
+
+            messagebox.showinfo("Venta realizada", f"Se realizó la venta correctamente. El ticket se ha guardado en {pdf_filename}.")
 
     #Appearance 
 
