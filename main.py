@@ -1171,7 +1171,7 @@ class App(customtkinter.CTk):
 
             doc.build(story, onFirstPage=add_background, onLaterPages=add_background)
 
-            story.append(Spacer(1, (letter[1] - 150) / 2)) 
+            story.append(Spacer(1, (letter[1] - 300) / 2)) 
 
             style_normal = getSampleStyleSheet()['Normal']
 
@@ -1186,7 +1186,7 @@ class App(customtkinter.CTk):
                 carrito_data.append([producto_nombre, cantidad, precio_unitario, precio_total])
 
             # Crear la tabla con ancho fijo para cada columna
-            table = Table(carrito_data, colWidths=[310, 40, 20, 80])
+            table = Table(carrito_data, colWidths=[310, 50, 55, 65])
 
             # Establecer el estilo de la tabla para que los datos estén alineados a la izquierda
             table.setStyle(TableStyle([
@@ -1196,10 +1196,22 @@ class App(customtkinter.CTk):
             # Agregar la tabla al story
             story.append(table)
 
-            story.append(Spacer(1, 50))
-            story.append(Paragraph(f"${subtotal:.2f}", style_normal))
-            story.append(Paragraph(f"${total_iva:.2f}", style_normal))
-            story.append(Paragraph(f"${total_con_iva:.2f}", style_normal))
+            # Crear una lista de datos para los tres valores (subtotal, IVA y total)
+            totals_data = [
+                [f"", Paragraph(f"${subtotal:.2f}", style_normal)],
+                [f"", Paragraph(f"${total_iva:.2f}", style_normal)],
+                [f"", Paragraph(f"${total_con_iva:.2f}", style_normal)],
+            ]
+
+            # Crear una tabla para los tres valores con alineación a la derecha
+            totals_table = Table(totals_data, colWidths=[420, 100])
+            totals_table.setStyle(TableStyle([
+                ('ALIGN', (0, 0), (-1, -1), 'RIGHT'),  # Alinea los datos a la derecha
+            ]))
+
+            # Agregar la tabla de los tres valores al story
+            story.append(Spacer(1, 200))
+            story.append(totals_table)
 
             doc.build(story)
 
