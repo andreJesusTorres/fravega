@@ -9,15 +9,13 @@ from tkinter import ttk
 from tkinter import messagebox
 from tkinter import filedialog
 from PIL import Image, ImageTk
-import tkinter.simpledialog as simpledialog
 from reportlab.lib.pagesizes import letter
-from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.pdfgen import canvas
 from datetime import datetime
 
 class App(customtkinter.CTk):
+    
     def __init__(self):
         super().__init__()
 
@@ -159,16 +157,24 @@ class App(customtkinter.CTk):
                 style.map("Treeview.Heading", background=[('active', '#b01685')])   
 
             self.treeview_compra = ttk.Treeview(self.frame_2, style="Treeview", height=4)           
-            self.treeview_compra["columns"] = ("area", "fecha", "documento")
-            self.treeview_compra.column("#0", width=40, minwidth=40, stretch=tk.NO)
-            self.treeview_compra.column("area", width=85, minwidth=100, stretch=tk.NO)
-            self.treeview_compra.column("fecha", width=100, minwidth=100, stretch=tk.NO)
-            self.treeview_compra.column("documento", width=250, minwidth=100, stretch=tk.NO)
-            self.treeview_compra.heading("#0", text="Id")
+            self.treeview_compra["columns"] = ("id","area", "fecha", "producto", "detalle")
+            self.treeview_compra.column("#0", width=0, minwidth=0, stretch=tk.NO)
+            self.treeview_compra.column("id", width=40, minwidth=40, stretch=tk.NO)
+            self.treeview_compra.column("area", width=75, minwidth=100, stretch=tk.NO)
+            self.treeview_compra.column("fecha", width=65, minwidth=100, stretch=tk.NO)
+            self.treeview_compra.column("producto", width=130, minwidth=100, stretch=tk.NO)
+            self.treeview_compra.column("detalle", width=150, minwidth=100, stretch=tk.NO)
+            self.treeview_compra.heading("#0", text="")
+            self.treeview_compra.heading("id", text="Id")
             self.treeview_compra.heading("area", text="Area")
             self.treeview_compra.heading("fecha", text="Fecha")
-            self.treeview_compra.heading("documento", text="Mensaje")
+            self.treeview_compra.heading("producto", text="Producto")
+            self.treeview_compra.heading("detalle", text="Detalle")
             self.treeview_compra.grid(row=4,column=0,padx=5,pady=0)
+
+            self.treeview_compra_show(self.treeview_compra)
+
+            self.treeview_compra.bind("<Escape>", lambda event: self.clear_selection_compra())
 
             self.treeview_compra_scrollbar = customtkinter.CTkScrollbar(self.frame_2, height=124, command=self.treeview_compra.yview)
             self.treeview_compra_scrollbar.grid(row=4, column=0,padx=(460,0))
@@ -177,16 +183,24 @@ class App(customtkinter.CTk):
             self.home_frame_2_banner_image_venta_label.grid(row=5, column=0, padx=5, pady=0)
 
             self.treeview_venta = ttk.Treeview(self.frame_2, style="Treeview", height=4)           
-            self.treeview_venta["columns"] = ("area", "fecha", "documento")
-            self.treeview_venta.column("#0", width=40, minwidth=40, stretch=tk.NO)
-            self.treeview_venta.column("area", width=85, minwidth=100, stretch=tk.NO)
-            self.treeview_venta.column("fecha", width=100, minwidth=100, stretch=tk.NO)
-            self.treeview_venta.column("documento", width=250, minwidth=100, stretch=tk.NO)
-            self.treeview_venta.heading("#0", text="Id")
-            self.treeview_venta.heading("area", text="Area")
+            self.treeview_venta["columns"] = ("id","fecha", "producto", "cantidad","precio")
+            self.treeview_venta.column("#0", width=0, minwidth=0, stretch=tk.NO)
+            self.treeview_venta.column("id", width=40, minwidth=40, stretch=tk.NO)
+            self.treeview_venta.column("fecha", width=85, minwidth=100, stretch=tk.NO)
+            self.treeview_venta.column("producto", width=210, minwidth=100, stretch=tk.NO)
+            self.treeview_venta.column("cantidad", width=50, minwidth=100, stretch=tk.NO)
+            self.treeview_venta.column("precio", width=70, minwidth=100, stretch=tk.NO)
+            self.treeview_venta.heading("#0", text="")
+            self.treeview_venta.heading("id", text="Id")
             self.treeview_venta.heading("fecha", text="Fecha")
-            self.treeview_venta.heading("documento", text="Mensaje")
+            self.treeview_venta.heading("producto", text="Producto")
+            self.treeview_venta.heading("cantidad", text="Cantidad")
+            self.treeview_venta.heading("precio", text="Precio")
             self.treeview_venta.grid(row=6,column=0,padx=5,pady=0)
+
+            self.treeview_venta_show(self.treeview_venta)
+                        
+            self.treeview_venta.bind("<Escape>", lambda event: self.clear_selection_venta())
 
             treeview_venta_scrollbar = customtkinter.CTkScrollbar(self.frame_2, height=124, command=self.treeview_compra.yview)
             treeview_venta_scrollbar.grid(row=6, column=0,padx=(460,0))
@@ -361,17 +375,17 @@ class App(customtkinter.CTk):
             self.home_frame_5_label_producto = customtkinter.CTkLabel(self.frame_5, text="1. Seleccione el o los productos:", fg_color="transparent")
             self.home_frame_5_label_producto.grid(row=1, column=0, padx=(0,250), pady=0)
             
-            self.values_menu_productos()
+            self.values_menu_products()
 
             self.home_frame_5_label_cantidad = customtkinter.CTkLabel(self.frame_5, text="2. Escriba la cantidad:", fg_color="transparent")
             self.home_frame_5_label_cantidad.grid(row=2, column=0, padx=(0,310), pady=0)
             self.home_frame_5_entry_cantidad = customtkinter.CTkEntry(self.frame_5, width=40)
             self.home_frame_5_entry_cantidad.grid(row=2,column=0,padx=(0,140),pady=0)
-            self.home_frame_5_button_2 = customtkinter.CTkButton(self.frame_5, text="Agregar al carrito", width=20, command=self.agregar_al_carrito)
+            self.home_frame_5_button_2 = customtkinter.CTkButton(self.frame_5, text="Agregar al carrito", width=20, command=self.add_to_cart)
             self.home_frame_5_button_2.grid(row=2, column=0, padx=(325, 0), pady=0)
-            self.home_frame_5_button_3 = customtkinter.CTkButton(self.frame_5, text="", image=self.editar, width=20, command=self.editar_item_seleccionado)
+            self.home_frame_5_button_3 = customtkinter.CTkButton(self.frame_5, text="", image=self.editar, width=20, command=self.edit_selected_item)
             self.home_frame_5_button_3.grid(row=2, column=0, padx=(160,0), pady=0)
-            self.home_frame_5_button_4 = customtkinter.CTkButton(self.frame_5, text="", image=self.eliminar, width=20, command=self.limpiar_carrito)
+            self.home_frame_5_button_4 = customtkinter.CTkButton(self.frame_5, text="", image=self.eliminar, width=20, command=lambda:self.clear_cart(self.carrito))
             self.home_frame_5_button_4.grid(row=2, column=0, padx=(70, 0), pady=0)
             
             style = ttk.Style()
@@ -405,7 +419,7 @@ class App(customtkinter.CTk):
             self.treeview_carrito.heading("Precio", text="Precio")
             self.treeview_carrito.grid(row=3,column=0,padx=5,pady=20)
 
-            self.treeview_carrito.bind("<ButtonRelease-1>", self.seleccionar_producto)
+            self.treeview_carrito.bind("<ButtonRelease-1>", self.select_product)
 
             self.treeview_carrito_scrollbar = customtkinter.CTkScrollbar(self.frame_5, height=104, command=self.treeview_carrito.yview)
             self.treeview_carrito_scrollbar.grid(row=3, column=0,padx=(420,0))
@@ -422,7 +436,7 @@ class App(customtkinter.CTk):
             self.home_frame_5_entry_total = customtkinter.CTkEntry(self.frame_5, width=120)
             self.home_frame_5_entry_total.grid(row=5,column=0,padx=(0,140),pady=20)
 
-            self.home_frame_5_button_5 = customtkinter.CTkButton(self.frame_5, text="Vender", width=20, command=lambda:self.realizar_venta(self.carrito))
+            self.home_frame_5_button_5 = customtkinter.CTkButton(self.frame_5, text="Vender", width=20, command=lambda:self.perform_sale(self.carrito))
             self.home_frame_5_button_5.grid(row=6, column=0, padx=(0, 400), pady=30)
         else:
             self.frame_5.grid_forget()
@@ -497,7 +511,7 @@ class App(customtkinter.CTk):
 
             self.home_frame.after(3500,after_user_error)
 
-    #Funciones frames
+    #Functions frames
 
     def frame_2_button_event(self):
         self.select_frame_by_name("frame_2")
@@ -513,6 +527,52 @@ class App(customtkinter.CTk):
     
     #Frame 2 functions
     
+    def treeview_compra_show(self, treeview_compra):
+
+        try:
+            conn = sqlite3.connect("fravega_data.db")
+            cursor = conn.cursor()
+            cursor.execute("SELECT id, area, fecha, prod, deta FROM adm_c")
+            fetchall = cursor.fetchall()
+            conn.close()
+
+            for fila in treeview_compra.get_children():
+                treeview_compra.delete(fila)
+
+            for dato in fetchall:
+                treeview_compra.insert("", "end", values=dato)
+
+        except sqlite3.Error as error:
+            mensaje_error = "Error al acceder a la base de datos: " + str(error)
+            tk.messagebox.showerror("Error", mensaje_error)
+
+    def treeview_venta_show(self, treeview_venta):
+
+        try:
+            conn = sqlite3.connect("fravega_data.db")
+            cursor = conn.cursor()
+            cursor.execute("SELECT id, fecha, prod, cant, precio FROM adm_v")
+            fetchall = cursor.fetchall()
+            conn.close()
+
+            for fila in treeview_venta.get_children():
+                treeview_venta.delete(fila)
+
+            for dato in fetchall:
+                treeview_venta.insert("", "end", values=dato)
+
+        except sqlite3.Error as error:
+            mensaje_error = "Error al acceder a la base de datos: " + str(error)
+            tk.messagebox.showerror("Error", mensaje_error)
+
+    def clear_selection_compra(self):    
+
+        self.treeview_compra.selection_remove(self.treeview_compra.focus())
+
+    def clear_selection_venta(self):
+
+        self.treeview_venta.selection_remove(self.treeview_venta.focus())
+
     #Frame 3 functions 
 
     def treeview_empleados_show(self, treeview_empleados):
@@ -592,10 +652,10 @@ class App(customtkinter.CTk):
                     self.clear_entries_and_selection_empleados()
                     self.refresh_treeview_empleados()
                 
-                    messagebox.showinfo("Exito","El empleado fue dado de baja.")
+                    messagebox.showinfo("Información","El empleado fue dado de baja.")
 
                 except sqlite3.Error as error:
-                    mensaje_error = "Error al eliminar el empleado: " + str(error)
+                    mensaje_error = "Error al acceder a la base de datos " + str(error)
                     messagebox.showerror("Error", mensaje_error)
             else:
                 return
@@ -633,7 +693,7 @@ class App(customtkinter.CTk):
                 self.clear_entries_and_selection_empleados()
                 self.refresh_treeview_empleados()
 
-                messagebox.showinfo("Exito","El empleado fue modificado.")
+                messagebox.showinfo("Información","El empleado fue modificado.")
             else:
                 return
 
@@ -666,7 +726,7 @@ class App(customtkinter.CTk):
                         return False
 
                 except sqlite3.Error as error:
-                    mensaje_error = "Error al verificar el DNI: " + str(error)
+                    mensaje_error = "Error al acceder a la base de datos: " + str(error)
                     messagebox.showerror("Error", mensaje_error)
                     return True
 
@@ -681,7 +741,7 @@ class App(customtkinter.CTk):
                 img = self.home_frame_3_entry_imagen.get()
 
                 if not dni or not nya or not area or not salario or not doc:
-                    messagebox.showwarning("Campos vacíos", "Por favor, complete todos los campos.")
+                    messagebox.showwarning("Cuidado", "Por favor, complete todos los campos.")
                     return
 
                 if dni_verification(dni):
@@ -705,10 +765,10 @@ class App(customtkinter.CTk):
                         self.clear_entries_and_selection_empleados()
                         self.refresh_treeview_empleados()
 
-                        messagebox.showinfo("Éxito", "El empleado fue dado de alta.")
+                        messagebox.showinfo("Información", "El empleado fue dado de alta.")
 
                     except sqlite3.Error as error:
-                        mensaje_error = "Error al agregar el empleado: " + str(error)
+                        mensaje_error = "Error al acceder a la base de datos " + str(error)
                         messagebox.showerror("Error", mensaje_error)
 
                 elif (question == "no"):
@@ -742,6 +802,8 @@ class App(customtkinter.CTk):
         self.home_frame_3_entry_documentación.delete(0, tk.END)
         self.home_frame_3_entry_imagen.delete(0, tk.END)
         self.home_frame_3_label_imagen.destroy()
+        
+        self.treeview_empleados.selection_remove(self.treeview_empleados.focus())
                
     def load_image(self):
         ruta_imagen = filedialog.askopenfilename(title="Seleccionar imagen", filetypes=[("Imagen", "*.png;*.jpg;*.jpeg")])
@@ -815,7 +877,7 @@ class App(customtkinter.CTk):
                 self.clear_entries_and_selection_deposito()
                 self.refresh_treeview_deposito()
             
-                messagebox.showinfo("Exito","El producto fue dado de baja.")
+                messagebox.showinfo("Información","El producto fue dado de baja.")
 
             except sqlite3.Error as error:
                 mensaje_error = "Error al acceder a la base de datos: " + str(error)
@@ -841,7 +903,7 @@ class App(customtkinter.CTk):
             self.clear_entries_and_selection_deposito()
             self.refresh_treeview_deposito()
 
-            messagebox.showinfo("Exito","El producto fue modificado.")
+            messagebox.showinfo("Información","El producto fue modificado.")
         else:
             return
 
@@ -856,7 +918,7 @@ class App(customtkinter.CTk):
             precio = self.home_frame_4_entry_precio.get()
 
             if not prod or not cant or not precio:
-                messagebox.showwarning("Campos vacíos", "Por favor, complete todos los campos.")
+                messagebox.showwarning("Cuidado", "Por favor, complete todos los campos.")
                 return
 
             try:
@@ -867,7 +929,7 @@ class App(customtkinter.CTk):
                 existe = cursor.fetchone()[0]
 
                 if existe > 0:
-                    messagebox.showwarning("Producto Existente", "El producto con el ID {} ya existe.".format(id))
+                    messagebox.showwarning("Cuidado", "El producto con el ID {} ya existe.".format(id))
                 else:
                     cursor.execute("INSERT INTO dep (id, prod, cant, precio) VALUES (?, ?, ?, ?)", (id, prod, cant, precio))
                     conexion.commit()
@@ -876,7 +938,7 @@ class App(customtkinter.CTk):
                     self.clear_entries_and_selection_deposito()
                     self.refresh_treeview_deposito()
 
-                    messagebox.showinfo("Éxito", "El producto fue dado de alta.")
+                    messagebox.showinfo("Información", "El producto fue dado de alta.")
 
             except sqlite3.Error as error:
                 mensaje_error = "Error al acceder a la base de datos: " + str(error)
@@ -910,10 +972,9 @@ class App(customtkinter.CTk):
             self.treeview_deposito.heading(col, anchor=tk.W)
             self.treeview_deposito.column(col, anchor=tk.W)
 
-
     #Frame 5 functions 
 
-    def values_menu_productos(self):
+    def values_menu_products(self):
         self.conn = sqlite3.connect("fravega_data.db")
         self.cursor = self.conn.cursor()
 
@@ -927,24 +988,23 @@ class App(customtkinter.CTk):
         self.home_frame_5_menu_producto.set("Seleccione producto")
         self.home_frame_5_menu_producto.configure(state="readonly")
 
-    def agregar_al_carrito(self):
+    def add_to_cart(self):
         producto_seleccionado = self.home_frame_5_menu_producto.get()
 
         if not producto_seleccionado or producto_seleccionado == "Seleccione producto":
-            messagebox.showinfo("Producto no seleccionado", "Por favor, seleccione un producto antes de agregarlo al carrito.")
+            messagebox.showinfo("Información", "Por favor, seleccione un producto antes de agregarlo al carrito.")
             return
 
         cantidad = self.home_frame_5_entry_cantidad.get()
 
         if not cantidad.isdigit() or int(cantidad) <= 0:
-            messagebox.showinfo("Cantidad inválida", "Por favor, ingrese una cantidad válida mayor a 0.")
+            messagebox.showinfo("Información", "Por favor, ingrese una cantidad válida mayor a 0.")
             return
 
         cantidad = int(cantidad)
         producto_seleccionado = self.home_frame_5_menu_producto.get()
         cantidad = int(self.home_frame_5_entry_cantidad.get())
 
-        # Realizar consulta para obtener información del producto seleccionado
         query = f"SELECT id, prod, precio, cant FROM dep WHERE prod = '{producto_seleccionado}'"
         self.cursor.execute(query)
         producto_info = self.cursor.fetchone()
@@ -954,14 +1014,14 @@ class App(customtkinter.CTk):
             producto_id, producto_nombre, producto_precio, stock_disponible = producto_info
 
             if cantidad > stock_disponible:
-                messagebox.showerror("Error de Stock", f"La cantidad ingresada es mayor al stock disponible. Stock disponible: {stock_disponible}")
+                messagebox.showerror("Error", f"La cantidad ingresada es mayor al stock disponible. Stock disponible: {stock_disponible}")
             elif cantidad <= 0:
-                messagebox.showerror("Error de Cantidad", "La cantidad ingresada debe ser mayor a 0.")
+                messagebox.showerror("Error", "La cantidad ingresada debe ser mayor a 0.")
             else:
                 # Verificar si el producto ya está en el carrito
                 for item in self.carrito:
                     if item["producto"] == producto_seleccionado:
-                        messagebox.showinfo("Producto Existente", "Este producto ya está en el carrito.")
+                        messagebox.showinfo("Información", "Este producto ya está en el carrito.")
                         return
 
                 # Calcular el precio total del producto
@@ -980,7 +1040,7 @@ class App(customtkinter.CTk):
                 self.home_frame_5_entry_cantidad.delete(0, tk.END)
 
                 # Actualizar la vista del Treeview
-                self.actualizar_treeview_carrito()
+                self.update_treeview_cart()
 
             # Restaurar el valor del Entry de cantidad
             self.home_frame_5_entry_cantidad.delete(0, tk.END)
@@ -988,12 +1048,12 @@ class App(customtkinter.CTk):
         else:
             messagebox.showerror("Error", "El producto seleccionado no se encontró en la base de datos.")
 
-    def editar_item_seleccionado(self):
+    def edit_selected_item(self):
         # Obtener el elemento seleccionado en el Treeview
         elemento_seleccionado = self.treeview_carrito.focus()
 
         if not elemento_seleccionado:
-            messagebox.showinfo("Ningún elemento seleccionado", "Por favor, seleccione un elemento en el carrito para editar.")
+            messagebox.showinfo("Información", "Por favor, seleccione un elemento en el carrito para editar.")
             return
 
         # Obtener los valores de las columnas del elemento seleccionado
@@ -1006,7 +1066,7 @@ class App(customtkinter.CTk):
                 nueva_cantidad = self.home_frame_5_entry_cantidad.get()
 
                 if not nueva_cantidad.isdigit() or int(nueva_cantidad) <= 0:
-                    messagebox.showinfo("Cantidad inválida", "Por favor, ingrese una cantidad válida mayor a 0.")
+                    messagebox.showinfo("Información", "Por favor, ingrese una cantidad válida mayor a 0.")
                     return
 
                 nueva_cantidad = int(nueva_cantidad)
@@ -1020,33 +1080,38 @@ class App(customtkinter.CTk):
                     _, _, _, stock_disponible = producto_info
 
                     if nueva_cantidad > stock_disponible:
-                        messagebox.showinfo("Cantidad excede el stock", f"La cantidad ingresada supera el stock disponible ({stock_disponible}).")
+                        messagebox.showinfo("Información", f"La cantidad ingresada supera el stock disponible ({stock_disponible}).")
                         return
 
                 # Actualizar la cantidad del elemento
                 self.carrito[idx]["cantidad"] = nueva_cantidad
 
                 # Actualizar el Treeview
-                self.actualizar_treeview_carrito()
+                self.update_treeview_cart()
 
                 # Limpiar los entry
                 self.home_frame_5_menu_producto.set("Seleccione producto")
                 self.home_frame_5_entry_cantidad.delete(0, tk.END)
                 return
 
-    def limpiar_carrito(self):
-        respuesta = messagebox.askyesno("Limpiar Carrito", "¿Desea limpiar el carrito?")
-        if respuesta:
-            self.carrito = []
-            self.actualizar_treeview_carrito()  
-            self.actualizar_precio_total()   
+    def clear_cart(self, carrito):
 
-            self.home_frame_5_menu_producto.set("Seleccione producto")
-            self.home_frame_5_entry_cantidad.delete(0, tk.END)
-            self.home_frame_5_entry_total.configure(state="normal")
-            self.home_frame_5_entry_total.delete(0, "end")
 
-    def actualizar_treeview_carrito(self):
+        if not carrito:
+            messagebox.showinfo("Información","No hay productos a eliminar.")
+        else:
+            respuesta = messagebox.askyesno("Limpiar Carrito", "¿Desea limpiar el carrito?")
+            if respuesta:
+                self.carrito = []
+                self.update_treeview_cart()  
+                self.update_total_price()   
+
+                self.home_frame_5_menu_producto.set("Seleccione producto")
+                self.home_frame_5_entry_cantidad.delete(0, tk.END)
+                self.home_frame_5_entry_total.configure(state="normal")
+                self.home_frame_5_entry_total.delete(0, "end")
+
+    def update_treeview_cart(self):
         self.treeview_carrito.delete(*self.treeview_carrito.get_children())
         for item in self.carrito:
             self.treeview_carrito.insert("", "end", values=(
@@ -1055,16 +1120,16 @@ class App(customtkinter.CTk):
                 item["cantidad"],
                 item["precio_unitario"]
             ))
-        self.actualizar_precio_total()
+        self.update_total_price()
                 
-    def actualizar_precio_total(self):
+    def update_total_price(self):
         self.home_frame_5_entry_total.configure(state="normal")
         self.total_venta = sum(item["precio_total"] for item in self.carrito)
         self.home_frame_5_entry_total.delete(0, "end")
         self.home_frame_5_entry_total.insert(0, self.total_venta)
         self.home_frame_5_entry_total.configure(state="readonly")
 
-    def seleccionar_producto(self, event):
+    def select_product(self, event):
         selected_item = self.treeview_carrito.selection()
         if selected_item:
             item_producto = self.treeview_carrito.item(selected_item, "values")[1]
@@ -1074,7 +1139,7 @@ class App(customtkinter.CTk):
             self.home_frame_5_entry_cantidad.delete(0, tk.END)
             self.home_frame_5_entry_cantidad.insert(0, item_cantidad)
 
-    def realizar_venta(self, carrito):
+    def perform_sale(self, carrito):
 
         dni_frame_5 = self.home_frame_5_entry_dni.get()
 
@@ -1158,11 +1223,19 @@ class App(customtkinter.CTk):
 
             doc.build(story)
 
-            messagebox.showinfo("Venta realizada", "Se realizó la venta correctamente.")
+            messagebox.showinfo("Información", "Se realizó la venta correctamente.")
+
+
+            self.carrito = []
+            self.home_frame_5_menu_producto.set("Seleccione producto")
+            self.home_frame_5_entry_dni.delete(0, tk.END)
+            self.home_frame_5_entry_cantidad.delete(0, tk.END)
+            self.home_frame_5_entry_total.configure(state="normal")
+            self.home_frame_5_entry_total.delete(0, "end")
+            self.treeview_carrito.delete(*self.treeview_carrito.get_children())
 
             subprocess.Popen([pdf_filename], shell=True)
             
-
     #Appearance 
 
     def change_appearance_mode_event(self, new_appearance_mode):
@@ -1172,7 +1245,13 @@ class App(customtkinter.CTk):
         self.home_frame_3_label_dni.grid(row=8,column=0)
 
         def after_theme_changed():
-                self.home_frame_3_label_dni.destroy()
+                self.carrito = []
+                self.home_frame_5_menu_producto.set("Seleccione producto")
+                self.home_frame_5_entry_dni.delete(0, tk.END)
+                self.home_frame_5_entry_cantidad.delete(0, tk.END)
+                self.home_frame_5_entry_total.configure(state="normal")
+                self.home_frame_5_entry_total.delete(0, "end")
+                self.treeview_carrito.delete(*self.treeview_carrito.get_children())
 
         self.home_frame.after(2500,after_theme_changed)
 
