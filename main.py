@@ -76,15 +76,10 @@ class App(customtkinter.CTk):
                                                       image=self.deposito_image, anchor="w", state="disabled", command=self.frame_4_button_event)
         self.frame_4_button.grid(row=4, column=0, sticky="ew")
 
-        self.frame_5_button = customtkinter.CTkButton(self.navigation_frame, corner_radius=0, height=40, border_spacing=10, text="Entregas",
+        self.frame_5_button = customtkinter.CTkButton(self.navigation_frame, corner_radius=0, height=40, border_spacing=10, text="Caja",
                                                       fg_color="transparent", text_color=("gray10", "gray90"), hover_color=("gray70", "gray30"),
-                                                      image=self.entregas_image, anchor="w", state="disabled", command=self.frame_5_button_event)
+                                                      image=self.caja_image, anchor="w", state="disabled", command=self.frame_5_button_event)
         self.frame_5_button.grid(row=5, column=0, sticky="ew")
-
-        self.frame_6_button = customtkinter.CTkButton(self.navigation_frame, corner_radius=0, height=40, border_spacing=10, text="Caja",
-                                                      fg_color="transparent", text_color=("gray10", "gray90"), hover_color=("gray70", "gray30"),
-                                                      image=self.caja_image, anchor="w", state="disabled", command=self.frame_6_button_event)
-        self.frame_6_button.grid(row=5, column=0, sticky="ew")
 
         self.appearance_mode_menu = customtkinter.CTkOptionMenu(self.navigation_frame, values=["Dark", "Light", "System"],
                                                                 command=self.change_appearance_mode_event)
@@ -121,7 +116,6 @@ class App(customtkinter.CTk):
         self.frame_3 = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
         self.frame_4 = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
         self.frame_5 = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
-        self.frame_6 = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
 
         self.select_frame_by_name("home")
 
@@ -356,88 +350,29 @@ class App(customtkinter.CTk):
             self.home_frame_4_button_4.grid(row=7, column=0, padx=(400,0), pady=20)
         else:
             self.frame_4.grid_forget()
+        
+            self.frame_5.grid_forget()
         if name == "frame_5":
             self.frame_5.grid(row=0, column=1, sticky="nsew")
 
-            self.home_frame_5_button_1 = customtkinter.CTkButton(self.frame_5, text="Mensaje", width=2, image=self.mensajes_image)
-            self.home_frame_5_button_1.grid(row=1, column=0, padx=5, pady=20,sticky="e")
+            self.home_frame_5_banner_image_empleados_label = customtkinter.CTkLabel(self.frame_5, text="", image=self.banner_image_caja)
+            self.home_frame_5_banner_image_empleados_label.grid(row=0, column=0, padx=5, pady=0)
 
-            self.home_frame_5_banner_image_empleados_label = customtkinter.CTkLabel(self.frame_5, text="", image=self.banner_image_entregas)
-            self.home_frame_5_banner_image_empleados_label.grid(row=2, column=0, padx=5, pady=0)
-
-            style = ttk.Style()
-            style.theme_use("default")
-
-            if(self.appearance_mode_menu.get() == "Dark"):                
-                style.configure("Treeview", background="#343638", foreground="white", rowheight=25, fieldbackground="#343638", bordercolor="#343638", borderwidth=0)
-                style.map('Treeview', background=[('selected', '#b01685')])
-            
-                style.configure("Treeview.Heading", background="#2E2F31", foreground="white", relief="flat")
-                style.map("Treeview.Heading", background=[('active', '#b01685')])
-                                  
-            elif(self.appearance_mode_menu.get() == "Light"):
-                style.configure("Treeview", background="#F9F9FA", foreground="black", rowheight=25, fieldbackground="#F9F9FA", bordercolor="#343638", borderwidth=0)
-                style.map('Treeview', background=[('selected', '#b01685')])
-            
-                style.configure("Treeview.Heading", background="#E3E3E3", foreground="gray1", relief="flat")
-                style.map("Treeview.Heading", background=[('active', '#b01685')])   
-
-            self.treeview_entregas = ttk.Treeview(self.frame_5, style="Treeview", height=4)           
-            self.treeview_entregas["columns"] = ("Producto", "Cantidad", "Cliente")
-            self.treeview_entregas.column("#0", width=40, minwidth=40, stretch=tk.NO)
-            self.treeview_entregas.column("Producto", width=182, minwidth=182, stretch=tk.NO)
-            self.treeview_entregas.column("Cantidad", width=52, minwidth=52, stretch=tk.NO)
-            self.treeview_entregas.column("Cliente", width=172, minwidth=172, stretch=tk.NO)
-            self.treeview_entregas.heading("#0", text="Id")
-            self.treeview_entregas.heading("Producto", text="Producto")
-            self.treeview_entregas.heading("Cantidad", text="Cantidad")
-            self.treeview_entregas.heading("Cliente", text="Cliente")
-            self.treeview_entregas.grid(row=3,column=0,padx=5,pady=0)
-
-            self.treeview_entregas_scrollbar = customtkinter.CTkScrollbar(self.frame_5, height=124, command=self.treeview_entregas.yview)
-            self.treeview_entregas_scrollbar.grid(row=3, column=0,padx=(460,0))
-
-            self.home_frame_5_label_producto = customtkinter.CTkLabel(self.frame_5, text="Producto", fg_color="transparent")
-            self.home_frame_5_label_producto.place(x=50,y=248)
-            self.home_frame_5_label_fecha_entrada = customtkinter.CTkLabel(self.frame_5, text="Cantidad", fg_color="transparent")
-            self.home_frame_5_label_fecha_entrada.place(x=198,y=248)
-            self.home_frame_5_label_fecha_salida = customtkinter.CTkLabel(self.frame_5, text="Cliente", fg_color="transparent")
-            self.home_frame_5_label_fecha_salida.place(x=351,y=248)
-            
-            self.home_frame_5_entry_producto= customtkinter.CTkEntry(self.frame_5, width=120)
-            self.home_frame_5_entry_producto.grid(row=5,column=0,padx=(0,300),pady=40)
-            self.home_frame_5_entry_fecha_entrada = customtkinter.CTkEntry(self.frame_5, width=120)
-            self.home_frame_5_entry_fecha_entrada.grid(row=5,column=0,padx=(0,0),pady=40)
-            self.home_frame_5_entry_fecha_salida = customtkinter.CTkEntry(self.frame_5, width=120)
-            self.home_frame_5_entry_fecha_salida.grid(row=5,column=0,padx=(300,0),pady=5)
-
-            self.home_frame_5_button_2 = customtkinter.CTkButton(self.frame_5, text="Guardar", width=20)
-            self.home_frame_5_button_2.grid(row=7, column=0, padx=(260,0), pady=58)
-            self.home_frame_5_button_3 = customtkinter.CTkButton(self.frame_5, text="Eliminar", width=20)
-            self.home_frame_5_button_3.grid(row=7, column=0, padx=(400,0), pady=58)
-        else:
-            self.frame_5.grid_forget()
-        if name == "frame_6":
-            self.frame_6.grid(row=0, column=1, sticky="nsew")
-
-            self.home_frame_6_banner_image_empleados_label = customtkinter.CTkLabel(self.frame_6, text="", image=self.banner_image_caja)
-            self.home_frame_6_banner_image_empleados_label.grid(row=0, column=0, padx=5, pady=0)
-
-            self.home_frame_6_label_producto = customtkinter.CTkLabel(self.frame_6, text="1. Seleccione el o los productos:", fg_color="transparent")
-            self.home_frame_6_label_producto.grid(row=1, column=0, padx=(0,250), pady=0)
+            self.home_frame_5_label_producto = customtkinter.CTkLabel(self.frame_5, text="1. Seleccione el o los productos:", fg_color="transparent")
+            self.home_frame_5_label_producto.grid(row=1, column=0, padx=(0,250), pady=0)
             
             self.values_menu_productos()
 
-            self.home_frame_6_label_cantidad = customtkinter.CTkLabel(self.frame_6, text="2. Escriba la cantidad:", fg_color="transparent")
-            self.home_frame_6_label_cantidad.grid(row=2, column=0, padx=(0,310), pady=0)
-            self.home_frame_6_entry_cantidad = customtkinter.CTkEntry(self.frame_6, width=40)
-            self.home_frame_6_entry_cantidad.grid(row=2,column=0,padx=(0,140),pady=0)
-            self.home_frame_6_button_2 = customtkinter.CTkButton(self.frame_6, text="Agregar al carrito", width=20, command=self.agregar_al_carrito)
-            self.home_frame_6_button_2.grid(row=2, column=0, padx=(325, 0), pady=0)
-            self.home_frame_6_button_3 = customtkinter.CTkButton(self.frame_6, text="", image=self.editar, width=20, command=self.editar_item_seleccionado)
-            self.home_frame_6_button_3.grid(row=2, column=0, padx=(160,0), pady=0)
-            self.home_frame_6_button_4 = customtkinter.CTkButton(self.frame_6, text="", image=self.eliminar, width=20, command=self.limpiar_carrito)
-            self.home_frame_6_button_4.grid(row=2, column=0, padx=(70, 0), pady=0)
+            self.home_frame_5_label_cantidad = customtkinter.CTkLabel(self.frame_5, text="2. Escriba la cantidad:", fg_color="transparent")
+            self.home_frame_5_label_cantidad.grid(row=2, column=0, padx=(0,310), pady=0)
+            self.home_frame_5_entry_cantidad = customtkinter.CTkEntry(self.frame_5, width=40)
+            self.home_frame_5_entry_cantidad.grid(row=2,column=0,padx=(0,140),pady=0)
+            self.home_frame_5_button_2 = customtkinter.CTkButton(self.frame_5, text="Agregar al carrito", width=20, command=self.agregar_al_carrito)
+            self.home_frame_5_button_2.grid(row=2, column=0, padx=(325, 0), pady=0)
+            self.home_frame_5_button_3 = customtkinter.CTkButton(self.frame_5, text="", image=self.editar, width=20, command=self.editar_item_seleccionado)
+            self.home_frame_5_button_3.grid(row=2, column=0, padx=(160,0), pady=0)
+            self.home_frame_5_button_4 = customtkinter.CTkButton(self.frame_5, text="", image=self.eliminar, width=20, command=self.limpiar_carrito)
+            self.home_frame_5_button_4.grid(row=2, column=0, padx=(70, 0), pady=0)
             
             style = ttk.Style()
             style.theme_use("default")
@@ -456,7 +391,7 @@ class App(customtkinter.CTk):
                 style.configure("Treeview.Heading", background="#E3E3E3", foreground="gray1", relief="flat")
                 style.map("Treeview.Heading", background=[('active', '#b01685')])   
 
-            self.treeview_carrito = ttk.Treeview(self.frame_6, style="Treeview", height=3)           
+            self.treeview_carrito = ttk.Treeview(self.frame_5, style="Treeview", height=3)           
             self.treeview_carrito["columns"] = ("Id","Producto", "Cantidad", "Precio")
             self.treeview_carrito.column("#0", width=0, minwidth=0, stretch=tk.NO)
             self.treeview_carrito.column("Id", width=40, minwidth=40, stretch=tk.NO)
@@ -472,25 +407,25 @@ class App(customtkinter.CTk):
 
             self.treeview_carrito.bind("<ButtonRelease-1>", self.seleccionar_producto)
 
-            self.treeview_carrito_scrollbar = customtkinter.CTkScrollbar(self.frame_6, height=104, command=self.treeview_carrito.yview)
+            self.treeview_carrito_scrollbar = customtkinter.CTkScrollbar(self.frame_5, height=104, command=self.treeview_carrito.yview)
             self.treeview_carrito_scrollbar.grid(row=3, column=0,padx=(420,0))
 
-            self.home_frame_6_label_dni = customtkinter.CTkLabel(self.frame_6, text="3. DNI Cliente:", fg_color="transparent")
-            self.home_frame_6_label_dni.grid(row=4, column=0, padx=(0,350), pady=0)
-            self.home_frame_6_entry_dni = customtkinter.CTkEntry(self.frame_6, width=120)
-            self.home_frame_6_entry_dni.grid(row=4,column=0,padx=(0,140),pady=0)
+            self.home_frame_5_label_dni = customtkinter.CTkLabel(self.frame_5, text="3. DNI Cliente:", fg_color="transparent")
+            self.home_frame_5_label_dni.grid(row=4, column=0, padx=(0,350), pady=0)
+            self.home_frame_5_entry_dni = customtkinter.CTkEntry(self.frame_5, width=120)
+            self.home_frame_5_entry_dni.grid(row=4,column=0,padx=(0,140),pady=0)
 
-            self.home_frame_6_entry_dni.configure(validate="key", validatecommand=(self.register(self.validate_dni), "%P"))
+            self.home_frame_5_entry_dni.configure(validate="key", validatecommand=(self.register(self.validate_dni), "%P"))
 
-            self.home_frame_6_label_total = customtkinter.CTkLabel(self.frame_6, text="4. Precio total:", fg_color="transparent")
-            self.home_frame_6_label_total.grid(row=5, column=0, padx=(0,350), pady=20)
-            self.home_frame_6_entry_total = customtkinter.CTkEntry(self.frame_6, width=120)
-            self.home_frame_6_entry_total.grid(row=5,column=0,padx=(0,140),pady=20)
+            self.home_frame_5_label_total = customtkinter.CTkLabel(self.frame_5, text="4. Precio total:", fg_color="transparent")
+            self.home_frame_5_label_total.grid(row=5, column=0, padx=(0,350), pady=20)
+            self.home_frame_5_entry_total = customtkinter.CTkEntry(self.frame_5, width=120)
+            self.home_frame_5_entry_total.grid(row=5,column=0,padx=(0,140),pady=20)
 
-            self.home_frame_6_button_5 = customtkinter.CTkButton(self.frame_6, text="Vender", width=20, command=lambda:self.realizar_venta(self.carrito))
-            self.home_frame_6_button_5.grid(row=6, column=0, padx=(0, 400), pady=30)
+            self.home_frame_5_button_5 = customtkinter.CTkButton(self.frame_5, text="Vender", width=20, command=lambda:self.realizar_venta(self.carrito))
+            self.home_frame_5_button_5.grid(row=6, column=0, padx=(0, 400), pady=30)
         else:
-            self.frame_6.grid_forget()
+            self.frame_5.grid_forget()
 
     def home_button_event(self):
         self.select_frame_by_name("home")
@@ -545,17 +480,14 @@ class App(customtkinter.CTk):
                 self.frame_3_button.configure(state="enabled")
                 self.frame_4_button.configure(state="enabled")
                 self.frame_5_button.configure(state="enabled")
-                self.frame_6_button.configure(state="enabled")
             elif (column0 == "Administración"):
                 self.frame_2_button.configure(state="enabled")
             elif (column0 == "Rrhh"):
                 self.frame_3_button.configure(state="enabled")
             elif (column0 == "Depósito"):
                 self.frame_4_button.configure(state="enabled")
-            elif (column0 == "Entregas"):
-                self.frame_5_button.configure(state="enabled")
             elif (column0 == "Caja"):
-                self.frame_6_button.configure(state="enabled")
+                self.frame_5_button.configure(state="enabled")
         else:
             self.home_frame_label_5 = customtkinter.CTkLabel(self.home_frame, text="Usuario no encontrado.", text_color="red")
             self.home_frame_label_5.place(x=195, y=380)
@@ -578,9 +510,8 @@ class App(customtkinter.CTk):
 
     def frame_5_button_event(self):
         self.select_frame_by_name("frame_5")
-
-    def frame_6_button_event(self):
-        self.select_frame_by_name("frame_6")   
+    
+    #Frame 2 functions
     
     #Frame 3 functions 
 
@@ -834,7 +765,7 @@ class App(customtkinter.CTk):
             self.treeview_empleados.heading(col, anchor=tk.W)
             self.treeview_empleados.column(col, anchor=tk.CENTER)
 
-    #Frame 4
+    #Frame 4 functions
 
     def treeview_deposito_show(self, treeview_deposito):
         try:
@@ -979,7 +910,8 @@ class App(customtkinter.CTk):
             self.treeview_deposito.heading(col, anchor=tk.W)
             self.treeview_deposito.column(col, anchor=tk.W)
 
-    #Frame 6 functions 
+
+    #Frame 5 functions 
 
     def values_menu_productos(self):
         self.conn = sqlite3.connect("fravega_data.db")
@@ -989,28 +921,28 @@ class App(customtkinter.CTk):
         self.cursor.execute(query)
         product_names = [row[0] for row in self.cursor.fetchall()]
 
-        self.home_frame_6_menu_producto = customtkinter.CTkComboBox(self.frame_6, values=product_names, width=250)
-        self.home_frame_6_menu_producto.grid(row=1, column=0, padx=(190, 0), pady=20)
+        self.home_frame_5_menu_producto = customtkinter.CTkComboBox(self.frame_5, values=product_names, width=250)
+        self.home_frame_5_menu_producto.grid(row=1, column=0, padx=(190, 0), pady=20)
 
-        self.home_frame_6_menu_producto.set("Seleccione producto")
-        self.home_frame_6_menu_producto.configure(state="readonly")
+        self.home_frame_5_menu_producto.set("Seleccione producto")
+        self.home_frame_5_menu_producto.configure(state="readonly")
 
     def agregar_al_carrito(self):
-        producto_seleccionado = self.home_frame_6_menu_producto.get()
+        producto_seleccionado = self.home_frame_5_menu_producto.get()
 
         if not producto_seleccionado or producto_seleccionado == "Seleccione producto":
             messagebox.showinfo("Producto no seleccionado", "Por favor, seleccione un producto antes de agregarlo al carrito.")
             return
 
-        cantidad = self.home_frame_6_entry_cantidad.get()
+        cantidad = self.home_frame_5_entry_cantidad.get()
 
         if not cantidad.isdigit() or int(cantidad) <= 0:
             messagebox.showinfo("Cantidad inválida", "Por favor, ingrese una cantidad válida mayor a 0.")
             return
 
         cantidad = int(cantidad)
-        producto_seleccionado = self.home_frame_6_menu_producto.get()
-        cantidad = int(self.home_frame_6_entry_cantidad.get())
+        producto_seleccionado = self.home_frame_5_menu_producto.get()
+        cantidad = int(self.home_frame_5_entry_cantidad.get())
 
         # Realizar consulta para obtener información del producto seleccionado
         query = f"SELECT id, prod, precio, cant FROM dep WHERE prod = '{producto_seleccionado}'"
@@ -1044,15 +976,15 @@ class App(customtkinter.CTk):
                     "precio_total": precio_total
                 })
                 
-                self.home_frame_6_menu_producto.set("Seleccione producto")
-                self.home_frame_6_entry_cantidad.delete(0, tk.END)
+                self.home_frame_5_menu_producto.set("Seleccione producto")
+                self.home_frame_5_entry_cantidad.delete(0, tk.END)
 
                 # Actualizar la vista del Treeview
                 self.actualizar_treeview_carrito()
 
             # Restaurar el valor del Entry de cantidad
-            self.home_frame_6_entry_cantidad.delete(0, tk.END)
-            self.home_frame_6_menu_producto.set("Seleccione producto")
+            self.home_frame_5_entry_cantidad.delete(0, tk.END)
+            self.home_frame_5_menu_producto.set("Seleccione producto")
         else:
             messagebox.showerror("Error", "El producto seleccionado no se encontró en la base de datos.")
 
@@ -1071,7 +1003,7 @@ class App(customtkinter.CTk):
         # Buscar el elemento en el carrito comparando con el nombre del producto
         for idx, item in enumerate(self.carrito):
             if item["producto"] == producto_nombre:
-                nueva_cantidad = self.home_frame_6_entry_cantidad.get()
+                nueva_cantidad = self.home_frame_5_entry_cantidad.get()
 
                 if not nueva_cantidad.isdigit() or int(nueva_cantidad) <= 0:
                     messagebox.showinfo("Cantidad inválida", "Por favor, ingrese una cantidad válida mayor a 0.")
@@ -1098,8 +1030,8 @@ class App(customtkinter.CTk):
                 self.actualizar_treeview_carrito()
 
                 # Limpiar los entry
-                self.home_frame_6_menu_producto.set("Seleccione producto")
-                self.home_frame_6_entry_cantidad.delete(0, tk.END)
+                self.home_frame_5_menu_producto.set("Seleccione producto")
+                self.home_frame_5_entry_cantidad.delete(0, tk.END)
                 return
 
     def limpiar_carrito(self):
@@ -1109,10 +1041,10 @@ class App(customtkinter.CTk):
             self.actualizar_treeview_carrito()  
             self.actualizar_precio_total()   
 
-            self.home_frame_6_menu_producto.set("Seleccione producto")
-            self.home_frame_6_entry_cantidad.delete(0, tk.END)
-            self.home_frame_6_entry_total.configure(state="normal")
-            self.home_frame_6_entry_total.delete(0, "end")
+            self.home_frame_5_menu_producto.set("Seleccione producto")
+            self.home_frame_5_entry_cantidad.delete(0, tk.END)
+            self.home_frame_5_entry_total.configure(state="normal")
+            self.home_frame_5_entry_total.delete(0, "end")
 
     def actualizar_treeview_carrito(self):
         self.treeview_carrito.delete(*self.treeview_carrito.get_children())
@@ -1126,10 +1058,11 @@ class App(customtkinter.CTk):
         self.actualizar_precio_total()
                 
     def actualizar_precio_total(self):
+        self.home_frame_5_entry_total.configure(state="normal")
         self.total_venta = sum(item["precio_total"] for item in self.carrito)
-        self.home_frame_6_entry_total.delete(0, "end")
-        self.home_frame_6_entry_total.insert(0, self.total_venta)
-        self.home_frame_6_entry_total.configure(state="readonly")
+        self.home_frame_5_entry_total.delete(0, "end")
+        self.home_frame_5_entry_total.insert(0, self.total_venta)
+        self.home_frame_5_entry_total.configure(state="readonly")
 
     def seleccionar_producto(self, event):
         selected_item = self.treeview_carrito.selection()
@@ -1137,15 +1070,15 @@ class App(customtkinter.CTk):
             item_producto = self.treeview_carrito.item(selected_item, "values")[1]
             item_cantidad = self.treeview_carrito.item(selected_item, "values")[2]
 
-            self.home_frame_6_menu_producto.set(item_producto)
-            self.home_frame_6_entry_cantidad.delete(0, tk.END)
-            self.home_frame_6_entry_cantidad.insert(0, item_cantidad)
+            self.home_frame_5_menu_producto.set(item_producto)
+            self.home_frame_5_entry_cantidad.delete(0, tk.END)
+            self.home_frame_5_entry_cantidad.insert(0, item_cantidad)
 
     def realizar_venta(self, carrito):
 
-        dni_frame_6 = self.home_frame_6_entry_dni.get()
+        dni_frame_5 = self.home_frame_5_entry_dni.get()
 
-        if not dni_frame_6:
+        if not dni_frame_5:
             messagebox.showwarning("Cuidado","Coloque el DNI.")
         elif not carrito:
             messagebox.showwarning("Cuidado","Seleccione un producto para vender.")
@@ -1156,6 +1089,7 @@ class App(customtkinter.CTk):
             image_path = os.path.join(current_dir, "images", "fravega_factura.png")
 
             fecha_hora_actual = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            fecha_actual = datetime.now().strftime("%Y-%m-%d")
             pdf_filename = os.path.join(current_dir, "tickets", f"ticket_{fecha_hora_actual}.pdf")
 
             subtotal = sum(item["precio_total"] for item in self.carrito)
@@ -1175,7 +1109,21 @@ class App(customtkinter.CTk):
 
             style_normal = getSampleStyleSheet()['Normal']
 
-            # Crear una lista de datos del carrito para la tabla
+            #Table list for dni and dat
+            dni_fecha_data = [
+                ["", dni_frame_5, "", fecha_actual]
+            ]
+
+            dni_table = Table(dni_fecha_data, colWidths=[100, 200, 100, 100])
+            dni_table.setStyle(TableStyle([
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'), 
+            ]))
+
+            story.insert(0, dni_table)
+
+            story.append(Spacer(1, 0))
+
+            #Table list for products
             carrito_data = []
             for item in self.carrito:
                 producto_nombre = item["producto"]
@@ -1185,37 +1133,35 @@ class App(customtkinter.CTk):
 
                 carrito_data.append([producto_nombre, cantidad, precio_unitario, precio_total])
 
-            # Crear la tabla con ancho fijo para cada columna
-            table = Table(carrito_data, colWidths=[310, 50, 55, 65])
+            table = Table(carrito_data, colWidths=[310, 50, 60, 65])
 
-            # Establecer el estilo de la tabla para que los datos estén alineados a la izquierda
             table.setStyle(TableStyle([
                 ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
             ]))
 
-            # Agregar la tabla al story
             story.append(table)
 
-            # Crear una lista de datos para los tres valores (subtotal, IVA y total)
+            #Table list for totals
             totals_data = [
                 [f"", Paragraph(f"${subtotal:.2f}", style_normal)],
                 [f"", Paragraph(f"${total_iva:.2f}", style_normal)],
                 [f"", Paragraph(f"${total_con_iva:.2f}", style_normal)],
             ]
 
-            # Crear una tabla para los tres valores con alineación a la derecha
             totals_table = Table(totals_data, colWidths=[420, 100])
             totals_table.setStyle(TableStyle([
-                ('ALIGN', (0, 0), (-1, -1), 'RIGHT'),  # Alinea los datos a la derecha
+                ('ALIGN', (0, 0), (-1, -1), 'RIGHT'), 
             ]))
 
-            # Agregar la tabla de los tres valores al story
-            story.append(Spacer(1, 200))
+            story.append(Spacer(1, 183))
             story.append(totals_table)
 
             doc.build(story)
 
-            messagebox.showinfo("Venta realizada", f"Se realizó la venta correctamente. El ticket se ha guardado en {pdf_filename}.")
+            messagebox.showinfo("Venta realizada", "Se realizó la venta correctamente.")
+
+            subprocess.Popen([pdf_filename], shell=True)
+            
 
     #Appearance 
 
