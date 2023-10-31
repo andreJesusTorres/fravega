@@ -285,11 +285,11 @@ class App(customtkinter.CTk):
             self.home_frame_3_entry_area.configure(validate="key", validatecommand=(self.register(self.validate_area), "%P"))
             self.home_frame_3_entry_salario.configure(validate="key", validatecommand=(self.register(self.validate_salario), "%P"))
 
-            self.home_frame_3_button_2 = customtkinter.CTkButton(self.frame_3, text="Modificar", width=20, command=self.treeview_empleados_modify)
+            self.home_frame_3_button_2 = customtkinter.CTkButton(self.frame_3, text="Modificar", width=20, command=lambda:self.treeview_empleados_modify(self.treeview_empleados))
             self.home_frame_3_button_2.grid(row=7, column=0, padx=(130,0), pady=20)
             self.home_frame_3_button_3 = customtkinter.CTkButton(self.frame_3, text="Guardar", width=20, command=self.treeview_empleados_add)
             self.home_frame_3_button_3.grid(row=7, column=0, padx=(270,0), pady=20)
-            self.home_frame_3_button_4 = customtkinter.CTkButton(self.frame_3, text="Eliminar", width=20, command=self.treeview_empleados_delete)
+            self.home_frame_3_button_4 = customtkinter.CTkButton(self.frame_3, text="Eliminar", width=20, command=lambda:self.treeview_empleados_delete(self.treeview_empleados))
             self.home_frame_3_button_4.grid(row=7, column=0, padx=(400,0), pady=20)
         else:
             self.frame_3.grid_forget()
@@ -625,77 +625,87 @@ class App(customtkinter.CTk):
                 if hasattr(self, "home_frame_3_label_imagen"):
                     self.home_frame_3_label_imagen.destroy()
 
-    def treeview_empleados_delete(self):
+    def treeview_empleados_delete(self,treeview_empleados):
 
-        dni = self.home_frame_3_entry_dni.get()
-        nya = self.home_frame_3_entry_nombreyapellido.get()
-        area = self.home_frame_3_entry_area.get()
-        salario = self.home_frame_3_entry_salario.get()
-        doc = self.home_frame_3_entry_documentación.get()
-        img = self.home_frame_3_entry_imagen.get()
-    
-        if not dni or not nya or not area or not salario or not doc:
-            messagebox.showwarning("Cuidado", "Seleccione un empleado para eliminar.")
+        selected_item = self.treeview_empleados.selection()
+
+        if not selected_item:
+            messagebox.showinfo("Información", "Seleccione un empleado para eliminar.")
         else:
-            question = messagebox.askquestion("Cuidado","¿Desea eliminar definitivamente el empleado?")
+            # Continuar con el proceso de eliminación
+            dni = self.home_frame_3_entry_dni.get()
+            nya = self.home_frame_3_entry_nombreyapellido.get()
+            area = self.home_frame_3_entry_area.get()
+            salario = self.home_frame_3_entry_salario.get()
+            doc = self.home_frame_3_entry_documentación.get()
+            img = self.home_frame_3_entry_imagen.get()
 
-            if (question == "yes"):
-                dni = self.home_frame_3_entry_dni.get()
-                try:
+            if not dni or not nya or not area or not salario or not doc:
+                messagebox.showinfo("Información", "Complete todos los campos antes de eliminar.")
+            else:
+                question = messagebox.askquestion("Cuidado", "¿Desea eliminar definitivamente el empleado?")
+
+                if question == "yes":
+                    dni = self.home_frame_3_entry_dni.get()
+                    try:
+                        conexion = sqlite3.connect("fravega_data.db")
+                        cursor = conexion.cursor()
+
+                        cursor.execute("DELETE FROM rh WHERE dni = ?", (dni,))
+                        conexion.commit()
+                        conexion.close()
+
+                        self.clear_entries_and_selection_empleados()
+                        self.refresh_treeview_empleados()
+
+                        messagebox.showinfo("Información", "El empleado fue dado de baja.")
+
+                    except sqlite3.Error as error:
+                        mensaje_error = "Error al acceder a la base de datos " + str(error)
+                        messagebox.showerror("Error", mensaje_error)
+                else:
+                    return
+        
+    def treeview_empleados_modify(self,treeview_empleados):
+
+        selected_item = self.treeview_empleados.selection()
+
+        if not selected_item:
+            messagebox.showinfo("Información", "Seleccione un empleado para modificar.")
+        else:
+            # Continuar con el proceso de modificación
+            dni = self.home_frame_3_entry_dni.get()
+            nya = self.home_frame_3_entry_nombreyapellido.get()
+            area = self.home_frame_3_entry_area.get()
+            salario = self.home_frame_3_entry_salario.get()
+            doc = self.home_frame_3_entry_documentación.get()
+            img = self.home_frame_3_entry_imagen.get()
+
+            if not dni or not nya or not area or not salario or not doc:
+                messagebox.showinfo("Información", "Complete todos los campos antes de modificar.")
+            else:
+                question = messagebox.askquestion("Cuidado", "¿Desea modificar el empleado?")
+
+                if question == "yes":
                     conexion = sqlite3.connect("fravega_data.db")
                     cursor = conexion.cursor()
 
-                    cursor.execute("DELETE FROM rh WHERE dni = ?", (dni,))
+                    question = messagebox.askquestion("Cuidado", "¿Desea modificar la imagen?")
+                    if question == "yes":
+                        self.load_image()
+                        img = self.home_frame_3_entry_imagen.get()
+                        cursor.execute("UPDATE rh SET nya=?, area=?, sal=?,doc=?,img=? WHERE dni=?", (nya, area, salario, doc, img, dni))
+                    elif question == "no":
+                        cursor.execute("UPDATE rh SET nya=?, area=?, sal=?,doc=? WHERE dni=?", (nya, area, salario, doc, dni))
                     conexion.commit()
                     conexion.close()
 
                     self.clear_entries_and_selection_empleados()
                     self.refresh_treeview_empleados()
-                
-                    messagebox.showinfo("Información","El empleado fue dado de baja.")
 
-                except sqlite3.Error as error:
-                    mensaje_error = "Error al acceder a la base de datos " + str(error)
-                    messagebox.showerror("Error", mensaje_error)
-            else:
-                return
-        
-    def treeview_empleados_modify(self):
-
-        dni = self.home_frame_3_entry_dni.get()
-        nya = self.home_frame_3_entry_nombreyapellido.get()
-        area = self.home_frame_3_entry_area.get()
-        salario = self.home_frame_3_entry_salario.get()
-        doc = self.home_frame_3_entry_documentación.get()
-        img = self.home_frame_3_entry_imagen.get()
-
-        if not dni or not nya or not area or not salario or not doc:
-            messagebox.showwarning("Cuidado", "Seleccione un empleado para modificar.")
-        else:
-            question = messagebox.askquestion("Cuidado","Desea modificar el empleado?")
-
-            if (question == "yes"):
-                
-                conexion = sqlite3.connect("fravega_data.db")
-                cursor = conexion.cursor()
-
-                question = messagebox.askquestion("Cuidado","¿Desea modificar la imagen?")
-                if (question == "yes"):
-                    self.load_image()
-                    img = self.home_frame_3_entry_imagen.get()
-                    cursor.execute("UPDATE rh SET nya=?, area=?, sal=?,doc=?,img=? WHERE dni=?", (nya, area, salario, doc, img, dni))
-
-                elif (question == "no"):
-                    cursor.execute("UPDATE rh SET nya=?, area=?, sal=?,doc=? WHERE dni=?", (nya, area, salario, doc, dni))
-                conexion.commit()
-                conexion.close()
-
-                self.clear_entries_and_selection_empleados()
-                self.refresh_treeview_empleados()
-
-                messagebox.showinfo("Información","El empleado fue modificado.")
-            else:
-                return
+                    messagebox.showinfo("Información", "El empleado fue modificado.")
+                else:
+                    return
 
     def treeview_empleados_add(self):
 
@@ -707,7 +717,7 @@ class App(customtkinter.CTk):
         img = self.home_frame_3_entry_imagen.get()
     
         if not dni or not nya or not area or not salario or not doc:
-            messagebox.showwarning("Cuidado", "Complete todos los campos.")
+            messagebox.showinfo("Información", "Complete todos los campos.")
         else:       
 
             def dni_verification(dni):
@@ -758,7 +768,7 @@ class App(customtkinter.CTk):
 
                         conexion = sqlite3.connect("fravega_data.db")
                         cursor = conexion.cursor()
-                        cursor.execute("INSERT INTO rh (dni, nya, area, sal, doc, img) VALUES (?, ?, ?, ?, ?, ?)",(dni, nya, area, salario, doc,img))
+                        cursor.execute("INSERT INTO rh (dni, nya, area, sal, doc, img) VALUES (?, ?, ?, ?, ?, ?)",(dni, nya, area, salario, doc, img))
                         conexion.commit()
                         conexion.close()
 
@@ -861,90 +871,106 @@ class App(customtkinter.CTk):
             self.home_frame_4_entry_precio.insert(0, item[3])
 
     def treeview_deposito_delete(self):
-        
-        question = messagebox.askquestion("Cuidado","¿Desea eliminar definitivamente el producto?")
 
-        if (question == "yes"):
-            id = self.home_frame_4_entry_id.get()
-            try:
+        id = self.home_frame_4_entry_id.get()
+        prod = self.home_frame_4_entry_producto.get()
+        cant = self.home_frame_4_entry_cantidad.get()
+        precio = self.home_frame_4_entry_precio.get()
+
+        if not id or not prod or not cant or not precio:
+            messagebox.showinfo("Información","No hay producto para eliminar.")
+        else:              
+            question = messagebox.askquestion("Cuidado","¿Desea eliminar definitivamente el producto?")
+
+            if (question == "yes"):
+                id = self.home_frame_4_entry_id.get()
+                try:
+                    conexion = sqlite3.connect("fravega_data.db")
+                    cursor = conexion.cursor()
+
+                    cursor.execute("DELETE FROM dep WHERE id=?", (id,))
+                    conexion.commit()
+                    conexion.close()
+
+                    self.clear_entries_and_selection_deposito()
+                    self.refresh_treeview_deposito()
+                
+                    messagebox.showinfo("Información","El producto fue dado de baja.")
+
+                except sqlite3.Error as error:
+                    mensaje_error = "Error al acceder a la base de datos: " + str(error)
+                    tk.messagebox.showerror("Error", mensaje_error)
+            else:
+                return
+        
+    def treeview_deposito_modify(self):
+
+        id = self.home_frame_4_entry_id.get()
+        prod = self.home_frame_4_entry_producto.get()
+        cant = self.home_frame_4_entry_cantidad.get()
+        precio = self.home_frame_4_entry_precio.get()
+
+        if not id or not prod or not cant or not precio:
+            messagebox.showinfo("Información","No hay producto para modificar.")
+        else:        
+            question = messagebox.askquestion("Cuidado","Desea modificar el producto?")
+
+            if (question == "yes"):            
                 conexion = sqlite3.connect("fravega_data.db")
                 cursor = conexion.cursor()
-
-                cursor.execute("DELETE FROM dep WHERE id=?", (id,))
+                cursor.execute("UPDATE dep SET prod=?,cant=?,precio=? WHERE id=?", (prod, cant, precio, id))
                 conexion.commit()
                 conexion.close()
 
                 self.clear_entries_and_selection_deposito()
                 self.refresh_treeview_deposito()
-            
-                messagebox.showinfo("Información","El producto fue dado de baja.")
 
-            except sqlite3.Error as error:
-                mensaje_error = "Error al acceder a la base de datos: " + str(error)
-                tk.messagebox.showerror("Error", mensaje_error)
-        else:
-            return
-        
-    def treeview_deposito_modify(self):
-        
-        question = messagebox.askquestion("Cuidado","Desea modificar el producto?")
-
-        if (question == "yes"):
-            id = self.home_frame_4_entry_id.get()
-            prod = self.home_frame_4_entry_producto.get()
-            cant = self.home_frame_4_entry_cantidad.get()
-            precio = self.home_frame_4_entry_precio.get()
-            conexion = sqlite3.connect("fravega_data.db")
-            cursor = conexion.cursor()
-            cursor.execute("UPDATE dep SET prod=?,cant=?,precio=? WHERE id=?", (prod, cant, precio, id))
-            conexion.commit()
-            conexion.close()
-
-            self.clear_entries_and_selection_deposito()
-            self.refresh_treeview_deposito()
-
-            messagebox.showinfo("Información","El producto fue modificado.")
-        else:
-            return
-
-    def treeview_deposito_add(self):
-        
-        question = messagebox.askquestion("Cuidado", "¿Desea agregar este nuevo producto?")
-
-        if question == "yes":
-            id = self.home_frame_4_entry_id.get()
-            prod = self.home_frame_4_entry_producto.get()
-            cant = self.home_frame_4_entry_cantidad.get()
-            precio = self.home_frame_4_entry_precio.get()
-
-            if not prod or not cant or not precio:
-                messagebox.showwarning("Cuidado", "Por favor, complete todos los campos.")
+                messagebox.showinfo("Información","El producto fue modificado.")
+            else:
                 return
 
-            try:
-                conexion = sqlite3.connect("fravega_data.db")
-                cursor = conexion.cursor()
+    def treeview_deposito_add(self):
 
-                cursor.execute("SELECT COUNT(*) FROM dep WHERE id = ?", (id,))
-                existe = cursor.fetchone()[0]
+        id = self.home_frame_4_entry_id.get()
+        prod = self.home_frame_4_entry_producto.get()
+        cant = self.home_frame_4_entry_cantidad.get()
+        precio = self.home_frame_4_entry_precio.get()
 
-                if existe > 0:
-                    messagebox.showwarning("Cuidado", "El producto con el ID {} ya existe.".format(id))
+        if not id or not prod or not cant or not precio:
+            messagebox.showinfo("Información","No hay producto para agregar.")
+        else:               
+            question = messagebox.askquestion("Cuidado", "¿Desea agregar este nuevo producto?")
+
+            if question == "yes":
+
+                if not prod or not cant or not precio:
+                    messagebox.showwarning("Cuidado", "Por favor, complete todos los campos.")
+                    return
                 else:
-                    cursor.execute("INSERT INTO dep (id, prod, cant, precio) VALUES (?, ?, ?, ?)", (id, prod, cant, precio))
-                    conexion.commit()
-                    conexion.close()
-                    
-                    self.clear_entries_and_selection_deposito()
-                    self.refresh_treeview_deposito()
+                    try:
+                        conexion = sqlite3.connect("fravega_data.db")
+                        cursor = conexion.cursor()
 
-                    messagebox.showinfo("Información", "El producto fue dado de alta.")
+                        cursor.execute("SELECT COUNT(*) FROM dep WHERE id = ?", (id,))
+                        existe = cursor.fetchone()[0]
 
-            except sqlite3.Error as error:
-                mensaje_error = "Error al acceder a la base de datos: " + str(error)
-                tk.messagebox.showerror("Error", mensaje_error)
-        else:
-            return
+                        if existe > 0:
+                            messagebox.showwarning("Cuidado", "El producto con el ID {} ya existe.".format(id))
+                        else:
+                            cursor.execute("INSERT INTO dep (id, prod, cant, precio) VALUES (?, ?, ?, ?)", (id, prod, cant, precio))
+                            conexion.commit()
+                            conexion.close()
+                            
+                            self.clear_entries_and_selection_deposito()
+                            self.refresh_treeview_deposito()
+
+                            messagebox.showinfo("Información", "El producto fue dado de alta.")
+
+                    except sqlite3.Error as error:
+                        mensaje_error = "Error al acceder a la base de datos: " + str(error)
+                        tk.messagebox.showerror("Error", mensaje_error)
+            else:
+                return
 
     def clear_entries_and_selection_deposito(self):
     
@@ -1049,18 +1075,16 @@ class App(customtkinter.CTk):
             messagebox.showerror("Error", "El producto seleccionado no se encontró en la base de datos.")
 
     def edit_selected_item(self):
-        # Obtener el elemento seleccionado en el Treeview
+        
         elemento_seleccionado = self.treeview_carrito.focus()
 
         if not elemento_seleccionado:
             messagebox.showinfo("Información", "Por favor, seleccione un elemento en el carrito para editar.")
             return
 
-        # Obtener los valores de las columnas del elemento seleccionado
         valores_elemento = self.treeview_carrito.item(elemento_seleccionado, "values")
         producto_id, producto_nombre, _, _ = valores_elemento
 
-        # Buscar el elemento en el carrito comparando con el nombre del producto
         for idx, item in enumerate(self.carrito):
             if item["producto"] == producto_nombre:
                 nueva_cantidad = self.home_frame_5_entry_cantidad.get()
@@ -1071,7 +1095,6 @@ class App(customtkinter.CTk):
 
                 nueva_cantidad = int(nueva_cantidad)
 
-                # Realizar consulta para obtener información del producto seleccionado
                 query = f"SELECT id, prod, precio, cant FROM dep WHERE prod = '{producto_nombre}'"
                 self.cursor.execute(query)
                 producto_info = self.cursor.fetchone()
@@ -1083,19 +1106,15 @@ class App(customtkinter.CTk):
                         messagebox.showinfo("Información", f"La cantidad ingresada supera el stock disponible ({stock_disponible}).")
                         return
 
-                # Actualizar la cantidad del elemento
                 self.carrito[idx]["cantidad"] = nueva_cantidad
 
-                # Actualizar el Treeview
                 self.update_treeview_cart()
 
-                # Limpiar los entry
                 self.home_frame_5_menu_producto.set("Seleccione producto")
                 self.home_frame_5_entry_cantidad.delete(0, tk.END)
                 return
 
     def clear_cart(self, carrito):
-
 
         if not carrito:
             messagebox.showinfo("Información","No hay productos a eliminar.")
@@ -1144,9 +1163,9 @@ class App(customtkinter.CTk):
         dni_frame_5 = self.home_frame_5_entry_dni.get()
 
         if not dni_frame_5:
-            messagebox.showwarning("Cuidado","Coloque el DNI.")
+            messagebox.showinfo("Información","Debe colocar el DNI.")
         elif not carrito:
-            messagebox.showwarning("Cuidado","Seleccione un producto para vender.")
+            messagebox.showinfo("Cuidado","Debe agregar un producto para vender.")
         else:
 
             current_dir = os.path.dirname(os.path.abspath(__file__))
