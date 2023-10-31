@@ -936,13 +936,13 @@ class App(customtkinter.CTk):
         cant = self.home_frame_4_entry_cantidad.get()
         precio = self.home_frame_4_entry_precio.get()
 
+        # Verifica que se completen todos los campos
         if not id or not prod or not cant or not precio:
-            messagebox.showinfo("Información","No hay producto para agregar.")
-        else:               
+            messagebox.showinfo("Información", "Complete todos los campos.")
+        else:
             question = messagebox.askquestion("Cuidado", "¿Desea agregar este nuevo producto?")
 
             if question == "yes":
-
                 if not prod or not cant or not precio:
                     messagebox.showwarning("Cuidado", "Por favor, complete todos los campos.")
                     return
@@ -960,7 +960,7 @@ class App(customtkinter.CTk):
                             cursor.execute("INSERT INTO dep (id, prod, cant, precio) VALUES (?, ?, ?, ?)", (id, prod, cant, precio))
                             conexion.commit()
                             conexion.close()
-                            
+
                             self.clear_entries_and_selection_deposito()
                             self.refresh_treeview_deposito()
 
@@ -971,7 +971,7 @@ class App(customtkinter.CTk):
                         tk.messagebox.showerror("Error", mensaje_error)
             else:
                 return
-
+    
     def clear_entries_and_selection_deposito(self):
     
         self.home_frame_4_entry_id.delete(0, tk.END)
