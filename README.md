@@ -23,19 +23,19 @@
 ## ✨ Features
 
 ### 🎯 Core Functionality
-- **🔐 Sistema de Autenticación**: Login con roles diferenciados (Gerente, Administración, RR.HH, Depósito, Caja)
-- **📊 Dashboard Administrativo**: Gestión de compras y ventas con TreeView integrado
-- **👥 Gestión de RR.HH**: Administración completa de empleados con datos de asistencia y salarios
-- **📦 Control de Depósito**: Gestión de stock con productos, cantidades y precios
-- **🚚 Sistema de Entregas**: Seguimiento de entregas pendientes de compras online
-- **💳 Módulo de Caja**: Carrito de compras, ventas y generación de tickets PDF
+- **🔐 Authentication System**: Login with differentiated roles (Manager, Administration, HR, Warehouse, Cash Register)
+- **📊 Administrative Dashboard**: Purchase and sales management with integrated TreeView
+- **👥 HR Management**: Complete employee administration with attendance and salary data
+- **📦 Warehouse Control**: Stock management with products, quantities, and prices
+- **🚚 Delivery System**: Tracking of pending online purchase deliveries
+- **💳 Cash Register Module**: Shopping cart, sales, and PDF ticket generation
 
 ### 🎨 User Experience
-- **🌙 Tema Personalizado**: Interfaz moderna con tema Fravega personalizado
-- **📱 Diseño Responsivo**: Interfaz adaptativa con CustomTkinter
-- **🎨 Navegación Intuitiva**: Menú lateral con iconos y navegación fluida
-- **📄 Generación de Reportes**: Tickets de venta en PDF con diseño profesional
-- **🔍 Búsqueda y Filtros**: Funcionalidades de búsqueda en todos los módulos
+- **🌙 Custom Theme**: Modern interface with personalized Fravega theme
+- **📱 Responsive Design**: Adaptive interface with CustomTkinter
+- **🎨 Intuitive Navigation**: Sidebar menu with icons and smooth navigation
+- **📄 Report Generation**: Professional PDF sales tickets
+- **🔍 Search and Filters**: Search functionality across all modules
 
 ## 🛠️ Technologies
 
@@ -105,7 +105,7 @@
 #### 🔐 Authentication System
 ```python
 # Login with role-based access
-# Available roles: Gerente, Administración, RR.HH, Depósito, Caja
+# Available roles: Manager, Administration, HR, Warehouse, Cash Register
 # Each role has access to specific modules
 ```
 
@@ -160,8 +160,8 @@ fravega/
 - **entregas**: Delivery tracking system
 
 ### Key Relationships
-- Purchases connect to **Depósito** module
-- Sales connect to **Entregas** and **Caja** modules
+- Purchases connect to **Warehouse** module
+- Sales connect to **Deliveries** and **Cash Register** modules
 - Role-based access control across all modules
 
 ## 🧪 Testing
@@ -190,6 +190,6 @@ This project is proprietary software. All rights reserved. This code is made pub
 
 <div align="center">
   <p>
-    <a href="#-fravega---sistema-de-gestión-empresarial">Back to top</a>
+    <a href="#-fravega---business-management-system">Back to top</a>
   </p>
 </div>
