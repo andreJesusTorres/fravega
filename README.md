@@ -1,4 +1,4 @@
-# 🏪 Fravega - Sistema de Gestión Empresarial
+# 🏪 Fravega - Business Management System
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
 [![CustomTkinter](https://img.shields.io/badge/CustomTkinter-5.2.0-purple.svg)](https://github.com/TomSchimansky/CustomTkinter)
@@ -7,7 +7,7 @@
 [![ReportLab](https://img.shields.io/badge/ReportLab-3.6+-red.svg)](https://www.reportlab.com/)
 [![License](https://img.shields.io/badge/License-Proprietary-red.svg)](LICENSE)
 
-> Sistema completo de gestión empresarial para Frávega con módulos de administración, recursos humanos, depósito, entregas y caja. **This project is part of my professional portfolio to demonstrate my development skills and practices.**
+> Complete business management system for Fravega with administration, human resources, warehouse, deliveries, and cash register modules. **This project is part of my professional portfolio to demonstrate my development skills and practices.**
 
 ## 📋 Table of Contents
 
